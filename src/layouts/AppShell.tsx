@@ -23,7 +23,9 @@ export default function AppShell() {
       </header>
 
       <div className="-mx-5">
+        <div className="-mx-5">
         <NationalBand />
+      </div>
       </div>
 
       <main className="flex-1">

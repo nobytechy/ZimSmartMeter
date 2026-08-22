@@ -1,87 +1,124 @@
 import { Link } from "react-router";
-import SiteNav from "../components/SiteNav";
-import SiteFooter from "../components/SiteFooter";
+import Mark from "../components/Mark";
+import NationalBand from "../components/NationalBand";
+
+/** Shared glass surface — the one decorative idea, used consistently. */
+const glass =
+  "rounded-2xl border border-white/10 bg-white/[0.06] backdrop-blur-xl";
+
+const navLinks = [
+  ["#how", "How it works"],
+  ["#features", "Features"],
+  ["#technology", "Technology"],
+] as const;
 
 const steps = [
-  ["01", "Pay", "Pick your meter, pick an amount — $10 to $100 — and pay. In the demo the payment is simulated; the engineering around it is not."],
-  ["02", "Verify", "Every payment carries a unique reference. The database accepts it once, and only once — a duplicate or a replay can never credit twice."],
-  ["03", "Credit", "Units land on the meter automatically and the balance moves in front of you. No 20-digit token, no queue, no guesswork."],
+  ["01", "Pay", "Choose your meter and an amount — $10 to $100 — priced by a configurable tariff."],
+  ["02", "Verify", "The payment is checked once, and only once. A duplicate event can never credit twice — the database guarantees it."],
+  ["03", "Credit", "Units land on the meter automatically. Balance and history update live on your phone."],
 ] as const;
 
 const features = [
-  ["Automatic crediting", "A verified payment becomes meter credit on its own. Idempotency is enforced by the database — not by hope.", null],
-  ["Meter verification", "Connecting a meter checks it against a simulated national registry, with real failure states: disconnected, tampered, already claimed.", null],
-  ["Live balance & usage", "A dashboard that reads like your meter: balance in kWh, daily consumption, and every credit on record.", null],
-  ["Phone-first sign-in", "OTP to your phone, the way Zimbabwe signs in. Demo mode uses fixed codes; production swaps in a real SMS gateway with zero app changes.", null],
-  ["Live meter telemetry", "A simulated smart meter publishes voltage, current and power over MQTT, streaming to the dashboard in realtime.", "Phase 2"],
-  ["AI energy assistant", "Ask \u201chow long will my balance last?\u201d — answered from your actual usage through locked-down tools, never raw database access.", "Phase 3"],
+  ["Automatic crediting", "A verified payment becomes meter credit on its own. No 20-digit token, no typing, no queue."],
+  ["Duplicate-proof payments", "Idempotent processing enforced by unique database constraints — double-crediting is structurally impossible."],
+  ["Verified meters", "Every meter number is checked against a simulated ZESA-style registry: format, status, and ownership."],
+  ["Live balance & usage", "A meter-style readout of your balance, daily consumption, and every transaction on record."],
+  ["Works offline", "Installable PWA. The dashboard stays readable without signal — payments sensibly require a connection."],
+  ["AI energy assistant", "Ask how long your balance will last. Answers come from real usage data through controlled tools."],
 ] as const;
 
 const stack = [
   "React 19",
   "TypeScript",
   "Vite",
-  "Tailwind 4",
+  "Tailwind CSS",
   "Supabase",
   "PostgreSQL + RLS",
   "MQTT",
   "PWA",
-  "Vitest",
+  "Netlify",
 ] as const;
-
-const glass =
-  "rounded-2xl border border-white/10 bg-white/5 backdrop-blur-sm";
 
 export default function Landing() {
   return (
-    <div id="top" className="relative min-h-dvh overflow-hidden bg-night text-paper">
-      {/* atmosphere: metering grid + soft national glows */}
-      <div aria-hidden className="bg-grid pointer-events-none absolute inset-0" />
-      <div aria-hidden className="pointer-events-none absolute -top-32 right-[-8rem] h-96 w-96 rounded-full bg-volt/15 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute top-[38rem] left-[-10rem] h-[28rem] w-[28rem] rounded-full bg-credit/15 blur-3xl" />
-      <div aria-hidden className="pointer-events-none absolute bottom-0 right-[-6rem] h-80 w-80 rounded-full bg-sky/10 blur-3xl" />
+    <div className="min-h-dvh bg-night text-paper">
+      {/* ── Navbar ─────────────────────────────────────────────── */}
+      <header className="sticky top-0 z-40 border-b border-white/10 bg-night/70 backdrop-blur-xl">
+        <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
+          <a href="#top" className="flex items-center gap-2.5">
+            <Mark size={24} />
+            <span className="font-mono text-sm font-medium tracking-tight">
+              ZimSmartMeter
+            </span>
+          </a>
+          <div className="hidden items-center gap-8 text-sm text-mist md:flex">
+            {navLinks.map(([href, label]) => (
+              <a key={href} href={href} className="hover:text-paper">
+                {label}
+              </a>
+            ))}
+            <a
+              href="https://github.com/nobytechy/ZimSmartMeter"
+              className="hover:text-paper"
+            >
+              GitHub
+            </a>
+          </div>
+          <Link
+            to="/login"
+            className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
+          >
+            Sign in
+          </Link>
+        </nav>
+        <NationalBand />
+      </header>
 
-      <div className="relative">
-        <SiteNav />
+      {/* ── Hero ───────────────────────────────────────────────── */}
+      <section id="top" className="relative overflow-hidden">
+        {/* ambient glow field behind the glass */}
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-32 -left-32 h-[28rem] w-[28rem] rounded-full bg-credit opacity-20 blur-3xl" />
+          <div className="absolute top-24 -right-40 h-[30rem] w-[30rem] rounded-full bg-sky opacity-15 blur-3xl" />
+          <div className="absolute -bottom-40 left-1/3 h-[24rem] w-[24rem] rounded-full bg-volt opacity-10 blur-3xl" />
+        </div>
 
-        {/* Hero */}
-        <section className="mx-auto grid max-w-6xl items-center gap-12 px-5 pt-16 pb-20 lg:grid-cols-2 lg:pt-24">
+        <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pt-16 pb-20 lg:grid-cols-2 lg:pt-24 lg:pb-28">
           <div className="flex flex-col gap-6">
             <p className="font-mono text-[11px] tracking-widest text-volt uppercase">
-              Magetsi · prepaid electricity, reimagined
+              Magetsi · prepaid electricity · demo
             </p>
-            <h1 className="text-4xl leading-[1.06] font-bold tracking-tight sm:text-5xl lg:text-6xl">
-              Power, credited
-              <br />
-              the moment you pay.
+            <h1 className="text-5xl leading-[1.05] font-bold tracking-tight md:text-6xl">
+              Power, credited the moment you pay.
             </h1>
-            <p className="max-w-xl text-base leading-relaxed text-mist sm:text-lg">
-              ZimSmartMeter is an open-source proof-of-concept for Zimbabwe's
-              prepaid grid — verified payments credit your meter automatically,
-              and your balance, usage and history live on your phone.
+            <p className="max-w-xl text-lg leading-relaxed text-mist">
+              ZimSmartMeter is an independent Zimbabwean proof-of-concept: a
+              verified payment becomes meter credit automatically — no 20-digit
+              token to type. Balance, usage and history, live on any phone.
             </p>
-            <div className="flex flex-col gap-3 sm:flex-row">
+            <div className="flex flex-wrap items-center gap-3">
               <Link
                 to="/login"
-                className="rounded-xl bg-volt px-6 py-4 text-center text-[15px] font-semibold text-ink active:brightness-95"
+                className="rounded-xl bg-volt px-6 py-4 text-[15px] font-semibold text-ink active:brightness-95"
               >
-                Try the live demo
+                Sign in with phone
               </Link>
               <a
-                href="#how"
-                className={`${glass} px-6 py-4 text-center text-[15px] font-semibold text-paper transition-colors hover:bg-white/10`}
+                href="https://github.com/nobytechy/ZimSmartMeter"
+                className="rounded-xl border border-white/15 px-6 py-4 text-[15px] font-semibold text-paper hover:bg-white/5"
               >
-                See how it works
+                View the source
               </a>
             </div>
-            <p className="text-xs text-mist">
-              Free demo · fixed-code phone sign-in · no real money involved
+            <p className="text-sm text-mist">
+              Demo phone numbers with fixed codes — no real SMS needed. Open
+              source, built in Zimbabwe.
             </p>
           </div>
 
-          {/* Glass frame around the meter LCD */}
-          <div className={`${glass} p-6 shadow-2xl shadow-black/40 backdrop-blur-md lg:p-8`}>
-            <div className="rounded-xl border border-white/10 bg-lcd p-5 font-mono">
+          {/* Product visual — glass panel around a meter LCD */}
+          <div className={`${glass} p-6`}>
+            <div className="rounded-xl bg-lcd p-5 font-mono">
               <div className="mb-4 flex items-center justify-between text-[11px] tracking-widest uppercase">
                 <span className="text-mist">Prepaid meter</span>
                 <span className="text-mist">ZW-DEMO-001</span>
@@ -91,11 +128,11 @@ export default function Landing() {
                   <div className="text-[11px] tracking-widest text-mist uppercase">
                     Balance
                   </div>
-                  <div className="text-4xl font-medium text-phosphor">
-                    142.6 <span className="text-lg">kWh</span>
+                  <div className="text-5xl font-medium text-phosphor">
+                    142.6 <span className="text-xl">kWh</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-2 pb-1 text-[13px] text-phosphor">
+                <div className="flex items-center gap-2 pb-1.5 text-[13px] text-phosphor">
                   <span
                     aria-hidden
                     className="h-2 w-2 rounded-full bg-phosphor motion-safe:animate-pulse"
@@ -103,132 +140,149 @@ export default function Landing() {
                   ONLINE
                 </div>
               </div>
-              <div className="mt-4 grid grid-cols-2 gap-3 border-t border-white/10 pt-3 text-[12px]">
-                <div>
-                  <div className="text-mist">Last credit</div>
-                  <div className="text-phosphor">$20.00 · +58.8 kWh</div>
-                </div>
-                <div>
-                  <div className="text-mist">Today's usage</div>
-                  <div className="text-phosphor">6.2 kWh</div>
-                </div>
+            </div>
+            <div className="mt-4 flex flex-col gap-2 font-mono text-[13px]">
+              <div className="flex items-center justify-between border-b border-white/10 pb-2 text-mist">
+                <span>PAY-000214 · $20.00</span>
+                <span className="text-phosphor">+58.8 kWh</span>
+              </div>
+              <div className="flex items-center justify-between text-mist">
+                <span>PAY-000198 · $10.00</span>
+                <span className="text-phosphor">+29.4 kWh</span>
               </div>
             </div>
-            <p className="mt-4 text-center font-mono text-[11px] tracking-widest text-mist uppercase">
-              Simulated demo meter — live in the dashboard
-            </p>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* How it works */}
-        <section id="how" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-16">
-          <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-            How it works
-          </h2>
-          <p className="mt-3 max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
-            Three steps, one guarantee: a payment credits exactly once.
-          </p>
-          <div className="mt-8 grid gap-4 md:grid-cols-3">
-            {steps.map(([n, title, detail]) => (
-              <div key={n} className={`${glass} p-6`}>
-                <span className="font-mono text-sm text-volt">{n}</span>
-                <h3 className="mt-3 text-lg font-semibold">{title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Features */}
-        <section id="features" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-16">
-          <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-            Features
-          </h2>
-          <p className="mt-3 max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
-            Built like a real utility platform — honestly labelled as a demo.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map(([title, detail, phase]) => (
-              <div key={title} className={`${glass} p-6`}>
-                <div className="flex items-start justify-between gap-3">
-                  <h3 className="text-lg font-semibold">{title}</h3>
-                  {phase && (
-                    <span className="rounded-full border border-white/15 bg-white/10 px-2 py-0.5 font-mono text-[10px] tracking-widest text-mist uppercase">
-                      {phase}
-                    </span>
-                  )}
-                </div>
-                <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Under the hood */}
-        <section id="stack" className="mx-auto max-w-6xl scroll-mt-24 px-5 py-16">
-          <div className={`${glass} p-8 lg:p-10`}>
-            <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-              Under the hood
-            </h2>
-            <p className="mt-3 max-w-2xl text-2xl font-semibold tracking-tight sm:text-3xl">
-              Every schema change is a migration. Every money path is a
-              transaction.
-            </p>
-            <p className="mt-4 max-w-2xl text-sm leading-relaxed text-mist sm:text-base">
-              Row Level Security guards every table, payment idempotency is a
-              database constraint rather than a frontend check, and the whole
-              build — decisions included — is public.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
-              {stack.map((item) => (
-                <span
-                  key={item}
-                  className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-mono text-sm text-mist"
-                >
-                  {item}
-                </span>
-              ))}
+      {/* ── How it works ───────────────────────────────────────── */}
+      <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
+        <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+          How it works
+        </h2>
+        <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
+          Three steps. One transaction. Zero double credits.
+        </p>
+        <div className="mt-8 grid gap-4 md:grid-cols-3">
+          {steps.map(([n, title, detail]) => (
+            <div key={n} className={`${glass} p-6`}>
+              <span className="font-mono text-sm text-credit">{n}</span>
+              <h3 className="mt-3 text-lg font-semibold">{title}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
             </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Features ───────────────────────────────────────────── */}
+      <section
+        id="features"
+        className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
+      >
+        <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+          Features
+        </h2>
+        <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
+          Built like a national utility app should be.
+        </p>
+        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map(([title, detail]) => (
+            <div key={title} className={`${glass} p-6`}>
+              <div className="flex items-center gap-2">
+                <h3 className="font-semibold">{title}</h3>
+                {title === "AI energy assistant" && (
+                  <span className="rounded bg-volt/15 px-1.5 py-0.5 font-mono text-[10px] tracking-widest text-volt uppercase">
+                    Phase 3
+                  </span>
+                )}
+              </div>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Technology ─────────────────────────────────────────── */}
+      <section
+        id="technology"
+        className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
+      >
+        <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+          Technology
+        </h2>
+        <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
+          Engineered in the open.
+        </p>
+        <p className="mt-4 max-w-2xl leading-relaxed text-mist">
+          Every architectural decision — idempotency, row-level security, the
+          registry emulation, the MQTT topic design — is documented in the
+          repository and built in reviewable stages.
+        </p>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {stack.map((item) => (
+            <span
+              key={item}
+              className="rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 font-mono text-sm text-mist"
+            >
+              {item}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      {/* ── Disclaimer ─────────────────────────────────────────── */}
+      <section className="mx-auto max-w-6xl px-5 py-8">
+        <div className={`${glass} border-volt/25 bg-volt/[0.07] p-6`}>
+          <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+            Independent demo
+          </h2>
+          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-mist">
+            ZimSmartMeter is an independent technical demonstration. It is not
+            affiliated with ZESA or any utility, does not connect to any
+            production infrastructure, and uses no proprietary systems or
+            branding. All meters, payments and readings are clearly labelled
+            synthetic demo data. No real money moves and no real electricity is
+            dispensed.
+          </p>
+        </div>
+      </section>
+
+      {/* ── Footer ─────────────────────────────────────────────── */}
+      <footer className="mt-8 border-t border-white/10">
+        <NationalBand />
+        <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between">
+          <div className="flex items-center gap-2.5">
+            <Mark size={22} />
+            <span className="font-mono text-sm font-medium">ZimSmartMeter</span>
+          </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm text-mist">
+            {navLinks.map(([href, label]) => (
+              <a key={href} href={href} className="hover:text-paper">
+                {label}
+              </a>
+            ))}
             <a
               href="https://github.com/nobytechy/ZimSmartMeter"
-              className="mt-6 inline-block text-sm font-medium text-volt underline underline-offset-4"
+              className="hover:text-paper"
             >
-              Read the source and build notes →
+              GitHub
             </a>
           </div>
-        </section>
-
-        {/* Honest-demo notice */}
-        <section className="mx-auto max-w-6xl px-5 py-4">
-          <div className="rounded-2xl border border-volt/30 bg-volt/10 p-5 text-sm leading-relaxed text-paper/90">
-            <span className="font-semibold">Independent demonstration.</span>{" "}
-            ZimSmartMeter is not affiliated with ZESA or any utility. All
-            meters, payments and balances are simulated demo data — no real
-            electricity is bought or sold here.
-          </div>
-        </section>
-
-        {/* Final CTA */}
-        <section className="mx-auto max-w-6xl px-5 py-16">
-          <div className={`${glass} flex flex-col items-center gap-5 p-10 text-center`}>
-            <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              See a payment become power.
-            </h2>
-            <p className="max-w-md text-sm text-mist">
-              Sign in with a demo phone number and a fixed code — you'll be
-              looking at a live meter in under a minute.
-            </p>
-            <Link
-              to="/login"
-              className="rounded-xl bg-volt px-8 py-4 text-[15px] font-semibold text-ink active:brightness-95"
+          <p className="text-sm text-mist">
+            Designed &amp; built by{" "}
+            <a
+              href="https://nobie.netlify.app"
+              className="text-paper underline underline-offset-4 hover:text-volt"
             >
-              Try the live demo
-            </Link>
-          </div>
-        </section>
-
-        <SiteFooter />
-      </div>
+              N.&nbsp;Tebulo
+            </a>
+          </p>
+        </div>
+        <div className="mx-auto max-w-6xl px-5 pb-8 text-xs text-mist/70">
+          © 2026 ZimSmartMeter — an open-source demo project. Not affiliated
+          with ZESA.
+        </div>
+      </footer>
     </div>
   );
 }
