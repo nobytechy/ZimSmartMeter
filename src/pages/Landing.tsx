@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import Mark from "../components/Mark";
-import NationalBand from "../components/NationalBand";
+import AccentLine from "../components/AccentLine";
 
 /** Shared glass surface — the one decorative idea, used consistently. */
 const glass =
@@ -71,7 +71,7 @@ export default function Landing() {
             Sign in
           </Link>
         </nav>
-        <NationalBand />
+        <AccentLine />
       </header>
 
       {/* ── Hero ───────────────────────────────────────────────── */}
@@ -249,7 +249,7 @@ export default function Landing() {
 
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="mt-8 border-t border-white/10">
-        <NationalBand />
+        <AccentLine />
         <div className="mx-auto flex max-w-6xl flex-col gap-6 px-5 py-10 md:flex-row md:items-center md:justify-between">
           <div className="flex items-center gap-2.5">
             <Mark size={22} />

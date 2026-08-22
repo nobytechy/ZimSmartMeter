@@ -1,6 +1,6 @@
 import { Link, Outlet } from "react-router";
 import Mark from "../components/Mark";
-import NationalBand from "../components/NationalBand";
+import AccentLine from "../components/AccentLine";
 
 /**
  * Global frame for every screen: brand header, routed content, and the
@@ -23,7 +23,7 @@ export default function AppShell() {
       </header>
 
       <div className="-mx-5">
-        <NationalBand />
+        <AccentLine />
       </div>
 
       <main className="flex-1">
