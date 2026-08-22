@@ -22,7 +22,9 @@ export default function AppShell() {
         </span>
       </header>
 
-      <NationalBand />
+      <div className="-mx-5">
+        <NationalBand />
+      </div>
 
       <main className="flex-1">
         <Outlet />

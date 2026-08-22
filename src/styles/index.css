@@ -30,8 +30,21 @@
   --color-lcd: #0d142e;
   --color-phosphor: #45e08c;
   --color-mist: #a9b4d6;
+  --color-night: #0b1129;
 }
 
 body {
   @apply bg-paper text-ink font-sans antialiased;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+/* faint metering-grid backdrop for dark marketing surfaces */
+.bg-grid {
+  background-image:
+    linear-gradient(to right, rgb(255 255 255 / 0.045) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.045) 1px, transparent 1px);
+  background-size: 32px 32px;
 }

@@ -10,8 +10,8 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <BrowserRouter>
       <Routes>
+        <Route index element={<Landing />} />
         <Route element={<AppShell />}>
-          <Route index element={<Landing />} />
           <Route path="login" element={<Login />} />
         </Route>
       </Routes>

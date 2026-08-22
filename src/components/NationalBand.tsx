@@ -15,7 +15,7 @@ const stripes = [
 
 export default function NationalBand() {
   return (
-    <div aria-hidden className="-mx-5 flex h-1">
+    <div aria-hidden className="flex h-1 w-full">
       {stripes.map((color, i) => (
         <span key={i} className={`flex-1 ${color}`} />
       ))}
