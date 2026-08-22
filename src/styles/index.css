@@ -24,6 +24,12 @@
   --color-sky: #35afd4;
   --color-warn: #9a6b00;
   --color-danger: #ce2129;
+
+  /* national band + meter LCD */
+  --color-coal: #171b26;
+  --color-lcd: #0d142e;
+  --color-phosphor: #45e08c;
+  --color-mist: #a9b4d6;
 }
 
 body {

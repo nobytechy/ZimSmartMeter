@@ -1,5 +1,6 @@
 import { Link, Outlet } from "react-router";
 import Mark from "../components/Mark";
+import NationalBand from "../components/NationalBand";
 
 /**
  * Global frame for every screen: brand header, routed content, and the
@@ -20,6 +21,8 @@ export default function AppShell() {
           demo
         </span>
       </header>
+
+      <NationalBand />
 
       <main className="flex-1">
         <Outlet />
