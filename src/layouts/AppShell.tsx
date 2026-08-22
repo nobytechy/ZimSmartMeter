@@ -1,4 +1,5 @@
 import { Link, Outlet } from "react-router";
+import Mark from "../components/Mark";
 
 /**
  * Global frame for every screen: brand header, routed content, and the
@@ -10,12 +11,12 @@ export default function AppShell() {
     <div className="mx-auto flex min-h-dvh max-w-md flex-col px-5">
       <header className="flex items-center justify-between py-5">
         <Link to="/" className="flex items-center gap-2">
-          <span aria-hidden className="h-2.5 w-2.5 rounded-full bg-credit" />
+          <Mark />
           <span className="font-mono text-sm font-medium tracking-tight">
             ZimSmartMeter
           </span>
         </Link>
-        <span className="font-mono text-[11px] tracking-widest text-ink-soft uppercase">
+        <span className="rounded bg-volt px-1.5 py-0.5 font-mono text-[11px] font-medium tracking-widest text-ink uppercase">
           demo
         </span>
       </header>

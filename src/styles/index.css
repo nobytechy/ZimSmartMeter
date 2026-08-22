@@ -1,22 +1,29 @@
 @import "tailwindcss";
 
 /*
- * Design tokens — the single source of truth for the visual system.
- * Colors carry meaning: `credit` green = balance OK / primary action,
- * `warn` amber is reserved for low-balance states, `danger` for failures.
+ * Design tokens — single source of truth for the visual system.
+ * Palette is inspired by the world of Zimbabwe's electricity utility
+ * (deep navy, golden yellow, green, red) without reproducing any
+ * proprietary mark. Colors carry meaning:
+ *   ink   — deep navy, all primary text
+ *   volt  — golden yellow, graphic accent only (never body text)
+ *   credit — green, balance OK / primary action
+ *   warn / danger — low balance, failures
  */
 @theme {
   --font-sans: "IBM Plex Sans", system-ui, ui-sans-serif, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --color-paper: #f7f8f8;
-  --color-ink: #171a1f;
-  --color-ink-soft: #5b6470;
-  --color-line: #e3e6ea;
-  --color-credit: #0e7a4a;
-  --color-credit-deep: #0a5c38;
-  --color-warn: #b45309;
-  --color-danger: #b3261e;
+  --color-paper: #f7f8fa;
+  --color-ink: #1b2a5b;
+  --color-ink-soft: #5a6486;
+  --color-line: #e2e6f0;
+  --color-volt: #f5c518;
+  --color-credit: #12894a;
+  --color-credit-deep: #0c6a39;
+  --color-sky: #35afd4;
+  --color-warn: #9a6b00;
+  --color-danger: #ce2129;
 }
 
 body {
