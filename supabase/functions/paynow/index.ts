@@ -1,29 +1,18 @@
-// ZimSmartMeter · direct PayNow Edge Function
-// The only place PayNow's integration key exists. Implements the raw
-// protocol byte-for-byte per developers.paynow.co.zw:
+// ZimSmartMeter · PayNow via ManishaPay
+// PayNow's edge filters Supabase's egress IPs, so the PayNow lane routes
+// through ManishaPay (provider: "paynow") — which runs on infrastructure
+// PayNow accepts. Money moves on PayNow rails; the transport is the
+// merchant's own gateway. The raw-protocol reference implementation
+// lives in ../paynow-direct.
 //
-//   OUTBOUND hash: join field VALUES in posted order (no URL-encoding),
-//   append the integration key, SHA-512, uppercase hex.
-//   INBOUND verify: join all values except `hash` in received order
-//   (URL-decoded), append the key, SHA-512, uppercase, compare.
-//   Never act on a message whose hash doesn't verify.
-//
-// Test mode notes (why the demo stays no-real-money):
-//   · authemail MUST be the merchant account's login email.
-//   · Only the merchant account can open browserurl and fake success.
-//
-// Secrets (supabase secrets set):
-//   PAYNOW_INTEGRATION_ID · PAYNOW_INTEGRATION_KEY
-//   PAYNOW_MERCHANT_EMAIL (test-mode authemail)
-//   APP_URL (return url base, e.g. https://yourapp.netlify.app)
+// Secrets: MANISHAPAY_API_KEY (mp_test_* for the demo), optional
+// MANISHAPAY_BASE.
 
 import { createClient } from "jsr:@supabase/supabase-js@2";
 
-const PAYNOW_URL = "https://www.paynow.co.zw/interface/initiatetransaction";
-const INTEGRATION_ID = Deno.env.get("PAYNOW_INTEGRATION_ID") ?? "";
-const INTEGRATION_KEY = Deno.env.get("PAYNOW_INTEGRATION_KEY") ?? "";
-const MERCHANT_EMAIL = Deno.env.get("PAYNOW_MERCHANT_EMAIL") ?? "";
-const APP_URL = Deno.env.get("APP_URL") ?? "http://localhost:5173";
+const MANISHAPAY_BASE =
+  Deno.env.get("MANISHAPAY_BASE") ?? "https://manishapay.netlify.app/api";
+const MANISHAPAY_API_KEY = Deno.env.get("MANISHAPAY_API_KEY") ?? "";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -38,65 +27,19 @@ function json(body: unknown, status = 200): Response {
   });
 }
 
-async function sha512Upper(input: string): Promise<string> {
-  const digest = await crypto.subtle.digest(
-    "SHA-512",
-    new TextEncoder().encode(input),
-  );
-  return Array.from(new Uint8Array(digest))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("")
-    .toUpperCase();
-}
-
-/** Outbound: hash = SHA512(values-in-order + key), uppercase. */
-async function outboundHash(entries: [string, string][]): Promise<string> {
-  return sha512Upper(entries.map(([, v]) => v).join("") + INTEGRATION_KEY);
-}
-
-/** Parse a PayNow urlencoded message preserving field order. */
-function parseMessage(text: string): [string, string][] {
-  return [...new URLSearchParams(text).entries()];
-}
-
-function field(entries: [string, string][], name: string): string | null {
-  const hit = entries.find(([k]) => k.toLowerCase() === name);
-  return hit ? hit[1] : null;
-}
-
-/** Inbound: recompute over every value except hash; constant order. */
-async function verifyInbound(entries: [string, string][]): Promise<boolean> {
-  const given = field(entries, "hash");
-  if (!given) return false;
-  const concat = entries
-    .filter(([k]) => k.toLowerCase() !== "hash")
-    .map(([, v]) => v)
-    .join("");
-  return (await sha512Upper(concat + INTEGRATION_KEY)) === given.toUpperCase();
-}
-
-function mapStatus(raw: string): "paid" | "failed" | "pending" {
-  const s = raw.toLowerCase();
-  if (s === "paid" || s === "awaiting delivery" || s === "delivered") {
-    return "paid";
-  }
-  if (s === "cancelled" || s === "failed" || s === "disputed") {
-    return "failed";
-  }
-  return "pending"; // Created / Sent / anything unknown stays pending
-}
-
 async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
-  if (!INTEGRATION_ID || !INTEGRATION_KEY) {
+  if (!MANISHAPAY_API_KEY) {
     return json({ error: "gateway_not_configured" }, 500);
   }
 
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const anon = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!, {
-    global: { headers: { Authorization: req.headers.get("Authorization") ?? "" } },
+    global: {
+      headers: { Authorization: req.headers.get("Authorization") ?? "" },
+    },
   });
   const svc = createClient(
     supabaseUrl,
@@ -119,9 +62,7 @@ async function handle(req: Request): Promise<Response> {
 
   const { data: payment } = await svc
     .from("payments")
-    .select(
-      "id, user_id, payment_ref, amount_usd, status, method, gateway_poll_url",
-    )
+    .select("id, user_id, payment_ref, amount_usd, status, method")
     .eq("payment_ref", payment_ref)
     .maybeSingle();
 
@@ -136,46 +77,32 @@ async function handle(req: Request): Promise<Response> {
     if (payment.status !== "pending") {
       return json({ error: "not_pending" }, 409);
     }
-    // Field ORDER is the hash — declared once, used for hash and body.
-    const entries: [string, string][] = [
-      ["id", INTEGRATION_ID],
-      ["reference", payment.payment_ref],
-      ["amount", Number(payment.amount_usd).toFixed(2)],
-      ["additionalinfo", `ZimSmartMeter demo credit ${payment.payment_ref}`],
-      ["returnurl", `${APP_URL}/app`],
-      ["resulturl", `${APP_URL}/app`],
-      ["authemail", MERCHANT_EMAIL],
-      ["status", "Message"],
-    ];
-    entries.push(["hash", await outboundHash(entries)]);
-
-    const res = await fetch(PAYNOW_URL, {
+    const res = await fetch(`${MANISHAPAY_BASE}/v1/pay`, {
       method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams(entries).toString(),
+      headers: {
+        Authorization: `Bearer ${MANISHAPAY_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        provider: "paynow",
+        reference: payment.payment_ref,
+        amount: Number(payment.amount_usd).toFixed(2),
+        description: `ZimSmartMeter PayNow credit ${payment.payment_ref}`,
+      }),
     });
-    const reply = parseMessage(await res.text());
-    const status = (field(reply, "status") ?? "").toLowerCase();
-
-    if (status !== "ok") {
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok || !out?.data?.ok) {
       return json(
-        { error: field(reply, "error") ?? "paynow_error" },
+        { error: out?.message ?? "gateway_error", requestId: out?.requestId },
         502,
       );
     }
-    if (!(await verifyInbound(reply))) {
-      // A response we cannot verify is a response we never act on.
-      return json({ error: "hash_mismatch" }, 502);
-    }
-
-    const browserUrl = field(reply, "browserurl");
-    const pollUrl = field(reply, "pollurl");
-    await svc
-      .from("payments")
-      .update({ gateway_poll_url: pollUrl })
-      .eq("id", payment.id);
-
-    return json({ ok: true, browser_url: browserUrl, status: "pending" });
+    return json({
+      ok: true,
+      browser_url: out.data.browser_url ?? null,
+      instructions: out.data.instructions ?? null,
+      status: out.data.status,
+    });
   }
 
   if (action === "status") {
@@ -186,30 +113,34 @@ async function handle(req: Request): Promise<Response> {
       });
       return json({ settled: true, outcome: payment.status, receipt: data });
     }
-    if (!payment.gateway_poll_url) {
-      return json({ settled: false, outcome: "not_initiated" });
+
+    const res = await fetch(
+      `${MANISHAPAY_BASE}/v1/pay/${encodeURIComponent(payment.payment_ref)}/status`,
+      { headers: { Authorization: `Bearer ${MANISHAPAY_API_KEY}` } },
+    );
+    const out = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      return json(
+        { error: out?.message ?? "gateway_error", requestId: out?.requestId },
+        502,
+      );
     }
 
-    const res = await fetch(payment.gateway_poll_url);
-    const reply = parseMessage(await res.text());
-    if (!(await verifyInbound(reply))) {
-      return json({ error: "hash_mismatch" }, 502);
+    const status: string = out?.data?.status ?? "pending";
+    const providerRef: string | null =
+      out?.data?.live?.provider_reference ?? null;
+
+    if (status === "paid" || status === "failed") {
+      const { data, error } = await svc.rpc("settle_gateway_payment", {
+        p_payment_ref: payment.payment_ref,
+        p_outcome: status,
+        p_provider_ref: providerRef,
+      });
+      if (error) return json({ error: error.message }, 500);
+      return json({ settled: true, outcome: status, receipt: data });
     }
 
-    const outcome = mapStatus(field(reply, "status") ?? "");
-    const providerRef = field(reply, "paynowreference");
-
-    if (outcome === "pending") {
-      return json({ settled: false, outcome: field(reply, "status") });
-    }
-
-    const { data, error } = await svc.rpc("settle_gateway_payment", {
-      p_payment_ref: payment.payment_ref,
-      p_outcome: outcome,
-      p_provider_ref: providerRef,
-    });
-    if (error) return json({ error: error.message }, 500);
-    return json({ settled: true, outcome, receipt: data });
+    return json({ settled: false, outcome: status });
   }
 
   return json({ error: "unknown_action" }, 400);
@@ -219,7 +150,6 @@ Deno.serve(async (req) => {
   try {
     return await handle(req);
   } catch (e) {
-    // A crash must still answer with CORS and a name — never a bare 500.
     return json(
       { error: "unhandled: " + (e instanceof Error ? e.message : String(e)) },
       500,

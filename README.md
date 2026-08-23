@@ -296,6 +296,7 @@ supabase/
 - Meters are **simulated** — the simulator is not real metering hardware and does not generate real STS tokens
 - The development MQTT broker is a public/free service — not production-grade transport security
 - Demo tariff model only — real utility tariff structures are more complex
+- PayNow's edge filters requests from Supabase's egress IPs, so the live PayNow lane routes through ManishaPay (`provider: "paynow"`); the byte-accurate direct-protocol implementation ships as a reference in `supabase/functions/paynow-direct`
 - This is an independent proof-of-concept: a real deployment would require a formal utility partnership, certified hardware, and regulatory compliance
 
 ---
