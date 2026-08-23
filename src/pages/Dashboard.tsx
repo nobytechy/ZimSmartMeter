@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import ActivityList from "../components/ActivityList";
+import AgentPanel from "../components/AgentPanel";
 
 const ConsumptionChart = lazy(() => import("../components/ConsumptionChart"));
 import MeterCard from "../components/MeterCard";
@@ -105,7 +106,7 @@ export default function Dashboard() {
                 to="/app/assistant"
                 className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
               >
-                AI Assistant
+                Ask Noby
               </Link>
               <Link
                 to="/app/simulator"
@@ -212,6 +213,7 @@ export default function Dashboard() {
 
       {meters && meters.length > 0 && (
         <>
+          <AgentPanel />
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {meters.map((m) => (
               <MeterCard key={m.id} meter={m} />

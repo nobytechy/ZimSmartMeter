@@ -10,6 +10,8 @@ const suggestions = [
   "What were my last purchases?",
   "Is my meter online?",
   "If I buy $20, how long will that last?",
+  "Set my low-balance threshold to 15 kWh",
+  "Anything needing my attention?",
 ] as const;
 
 /**
@@ -60,7 +62,7 @@ export default function Assistant() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Energy Assistant
+            Noby · Energy Agent
           </h1>
           <p className="mt-0.5 text-sm text-mist">
             Answers come only from your meter's data. Estimates are labelled.
