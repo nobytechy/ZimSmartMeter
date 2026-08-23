@@ -9,6 +9,7 @@ import { useSession } from "../features/auth/sessionContext";
 import { simulatedDailyUsage } from "../features/consumption/simulated";
 import type { DayUsage } from "../features/consumption/simulated";
 import { useMeters } from "../features/meters/useMeters";
+import { useLowBalanceBeeper } from "../hooks/useLowBalanceBeeper";
 import { useTransactions } from "../features/transactions/useTransactions";
 import { signOut } from "../services/auth";
 import { claimDemoMeter } from "../services/meters";
@@ -26,6 +27,17 @@ export default function Dashboard() {
   const [claimError, setClaimError] = useState<string | null>(null);
   const { txns, loading: txnsLoading } = useTransactions(8);
   const [chartMeterId, setChartMeterId] = useState<string | null>(null);
+  const [beeper, setBeeper] = useState(
+    () => localStorage.getItem("zsm.beeper") !== "off",
+  );
+  useLowBalanceBeeper(meters, beeper);
+
+  function toggleBeeper() {
+    setBeeper((b) => {
+      localStorage.setItem("zsm.beeper", b ? "off" : "on");
+      return !b;
+    });
+  }
 
   const activeChartMeter =
     (meters ?? []).find((m) => m.id === chartMeterId) ?? (meters ?? [])[0];
@@ -103,6 +115,14 @@ export default function Dashboard() {
               </Link>
             </>
           )}
+          <button
+            type="button"
+            onClick={toggleBeeper}
+            title="Low-credit beeper, just like the real meter"
+            className="font-mono text-xs text-mist underline underline-offset-4"
+          >
+            beeper: {beeper ? "on" : "off"}
+          </button>
           <button
             type="button"
             onClick={() => {

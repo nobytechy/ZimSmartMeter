@@ -6,6 +6,12 @@ import { glass } from "./ui";
 /** One meter, rendered the way its owner knows it: as an LCD readout. */
 export default function MeterCard({ meter }: { meter: Meter }) {
   const online = meter.status === "online";
+  const balanceTone =
+    meter.balance_kwh <= 0
+      ? "text-flare"
+      : meter.balance_kwh <= 10
+        ? "text-volt"
+        : "text-phosphor";
   return (
     <div className={`${glass} p-4`}>
       <div className="mb-3 flex items-center justify-between gap-3">
@@ -30,7 +36,7 @@ export default function MeterCard({ meter }: { meter: Meter }) {
         <div className="text-[11px] tracking-widest text-mist uppercase">
           Balance
         </div>
-        <div className="mt-1 text-3xl font-medium text-phosphor">
+        <div className={`mt-1 text-3xl font-medium ${balanceTone}`}>
           {meter.balance_kwh.toFixed(1)} <span className="text-base">kWh</span>
         </div>
       </div>
