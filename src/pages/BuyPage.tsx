@@ -3,7 +3,9 @@ import { Link, useParams } from "react-router";
 import { fieldDark, glass } from "../components/ui";
 import { getMeter } from "../services/meters";
 import {
+  checkManishaPay,
   confirmCashPayment,
+  initiateManishaPay,
   purchaseElectricity,
 } from "../services/purchases";
 import type {
@@ -27,7 +29,13 @@ const reasonMessages: Record<string, string> = {
   payment_not_found: "That payment doesn't exist on your account.",
 };
 
-type Step = "amount" | "method" | "confirm" | "cashPending" | "done";
+type Step =
+  | "amount"
+  | "method"
+  | "confirm"
+  | "cashPending"
+  | "gatewayPending"
+  | "done";
 
 /**
  * Buy wizard: amount → method → confirm → receipt (instant), with a
@@ -48,6 +56,7 @@ export default function BuyPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pendingPay, setPendingPay] = useState<PurchasePending | null>(null);
+  const [gatewayUrl, setGatewayUrl] = useState<string | null>(null);
   const [result, setResult] = useState<PurchaseSuccess | null>(null);
 
   useEffect(() => {
@@ -97,11 +106,66 @@ export default function BuyPage() {
     }
     if (res.pending) {
       setPendingPay(res);
-      setStep("cashPending");
+      setStep(res.method === "manishapay" ? "gatewayPending" : "cashPending");
       return;
     }
     setResult(res);
     setStep("done");
+  }
+
+  useEffect(() => {
+    if (step !== "gatewayPending" || !pendingPay) return;
+    let cancelled = false;
+
+    void initiateManishaPay(pendingPay.payment_ref).then((res) => {
+      if (cancelled) return;
+      if ("error" in res) {
+        setError(res.error);
+        return;
+      }
+      setGatewayUrl(res.browser_url);
+    });
+
+    const poll = setInterval(() => {
+      void checkManishaPay(pendingPay.payment_ref).then((res) => {
+        if (cancelled || "error" in res) return;
+        if (res.settled) {
+          clearInterval(poll);
+          if (res.outcome === "paid" && res.receipt.ok && !res.receipt.pending) {
+            setResult(res.receipt);
+            setStep("done");
+          } else {
+            setError("The gateway reported this payment as failed.");
+          }
+        }
+      });
+    }, 5000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(poll);
+    };
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+  }, [step, pendingPay]);
+
+  async function checkNow() {
+    if (!pendingPay) return;
+    setBusy(true);
+    setError(null);
+    const res = await checkManishaPay(pendingPay.payment_ref);
+    setBusy(false);
+    if ("error" in res) {
+      setError(res.error);
+      return;
+    }
+    if (res.settled) {
+      if (res.outcome === "paid" && res.receipt.ok && !res.receipt.pending) {
+        setResult(res.receipt);
+        setStep("done");
+      } else {
+        setError("The gateway reported this payment as failed.");
+      }
+    }
   }
 
   async function agentConfirm() {
@@ -247,17 +311,19 @@ export default function BuyPage() {
                 Direct gateway — arriving with its integration.
               </p>
             </div>
-            <div className={`${glass} p-4 opacity-50`}>
-              <div className="flex items-center gap-2 font-semibold">
-                ManishaPay
-                <span className="rounded bg-volt/15 px-1.5 py-0.5 font-mono text-[10px] tracking-widest text-volt uppercase">
-                  next
-                </span>
-              </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMethod("manishapay");
+                setStep("confirm");
+              }}
+              className={`${glass} p-4 text-left hover:border-volt/50`}
+            >
+              <div className="font-semibold">ManishaPay</div>
               <p className="mt-1 text-sm text-mist">
-                Custom middleware — arriving with its integration.
+                EcoCash, cards &amp; more — one gateway, simulated mode.
               </p>
-            </div>
+            </button>
           </div>
           <button
             type="button"
@@ -283,7 +349,13 @@ export default function BuyPage() {
             </div>
             <div className="flex justify-between">
               <span className="text-mist">Method</span>
-              <span>{method === "cash" ? "Cash at agent" : "Instant"}</span>
+              <span>
+                {method === "cash"
+                  ? "Cash at agent"
+                  : method === "manishapay"
+                    ? "ManishaPay"
+                    : "Instant"}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-mist">Amount</span>
@@ -302,9 +374,9 @@ export default function BuyPage() {
           >
             {busy
               ? "Processing…"
-              : method === "cash"
-                ? "Reserve & get reference"
-                : `Pay $${amount.toFixed(2)} (simulated)`}
+              : method === "instant"
+                ? `Pay $${amount.toFixed(2)} (simulated)`
+                : "Reserve & get reference"}
           </button>
           {error && <p className="text-sm text-flare">{error}</p>}
           <button
@@ -353,6 +425,56 @@ export default function BuyPage() {
         </>
       )}
 
+      {step === "gatewayPending" && pendingPay && (
+        <>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Pay with ManishaPay
+          </h1>
+          <div className="rounded-xl bg-lcd p-5 font-mono">
+            <div className="text-[11px] tracking-widest text-mist uppercase">
+              Gateway reference
+            </div>
+            <div className="mt-2 text-3xl font-medium text-phosphor">
+              {pendingPay.payment_ref}
+            </div>
+            <div className="mt-3 border-t border-white/10 pt-3 text-sm text-mist">
+              ${pendingPay.amount_usd.toFixed(2)} · awaiting the gateway
+            </div>
+          </div>
+          {gatewayUrl ? (
+            <a
+              href={gatewayUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl bg-volt px-5 py-4 text-center text-[15px] font-semibold text-ink active:brightness-95"
+            >
+              Open ManishaPay checkout
+            </a>
+          ) : (
+            <p className="text-center font-mono text-sm text-mist">
+              Preparing checkout…
+            </p>
+          )}
+          <p className="text-sm leading-relaxed text-mist">
+            Complete the payment in the checkout tab. This screen checks the
+            gateway every few seconds and credits the meter the moment it
+            reports <span className="font-mono text-paper">paid</span>.
+          </p>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => void checkNow()}
+            className="rounded-xl border border-white/15 px-5 py-4 text-[15px] font-semibold hover:bg-white/5 disabled:opacity-60"
+          >
+            {busy ? "Checking…" : "I've paid — check now"}
+          </button>
+          {error && <p className="text-sm text-flare">{error}</p>}
+          <Link to="/app" className="text-sm text-mist underline underline-offset-4">
+            Later — back to dashboard
+          </Link>
+        </>
+      )}
+
       {step === "done" && result && (
         <>
           <h1 className="text-2xl font-semibold tracking-tight">
@@ -372,7 +494,11 @@ export default function BuyPage() {
                 {result.new_balance.toFixed(1)} kWh
               </span>{" "}
               · ${result.amount_usd.toFixed(2)} ·{" "}
-              {result.method === "cash" ? "cash" : "instant"}
+              {result.method === "cash"
+                ? "cash"
+                : result.method === "manishapay"
+                  ? "ManishaPay"
+                  : "instant"}
             </div>
           </div>
           {result.duplicate && (

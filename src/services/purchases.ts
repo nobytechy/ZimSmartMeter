@@ -59,3 +59,32 @@ export async function confirmCashPayment(
   if (error) return { ok: false, reason: error.message };
   return data as PurchaseResult;
 }
+
+export type GatewayInitiate =
+  | { ok: true; browser_url: string | null; instructions: string | null; status: string }
+  | { error: string };
+
+export type GatewayStatus =
+  | { settled: true; outcome: string; receipt: PurchaseResult }
+  | { settled: false; outcome: string }
+  | { error: string };
+
+export async function initiateManishaPay(
+  paymentRef: string,
+): Promise<GatewayInitiate> {
+  const { data, error } = await supabase.functions.invoke("manishapay", {
+    body: { action: "initiate", payment_ref: paymentRef },
+  });
+  if (error) return { error: error.message };
+  return data as GatewayInitiate;
+}
+
+export async function checkManishaPay(
+  paymentRef: string,
+): Promise<GatewayStatus> {
+  const { data, error } = await supabase.functions.invoke("manishapay", {
+    body: { action: "status", payment_ref: paymentRef },
+  });
+  if (error) return { error: error.message };
+  return data as GatewayStatus;
+}
