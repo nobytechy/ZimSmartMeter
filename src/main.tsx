@@ -10,6 +10,7 @@ import BuyPage from "./pages/BuyPage";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
+import SimulatorRoute from "./pages/SimulatorRoute";
 import "./styles/index.css";
 
 createRoot(document.getElementById("root")!).render(
@@ -25,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="app/meters/new" element={<AddMeter />} />
               <Route path="app/meters/:meterId/buy" element={<BuyPage />} />
               <Route path="app/activity" element={<Activity />} />
+              <Route path="app/simulator" element={<SimulatorRoute />} />
             </Route>
           </Route>
         </Routes>
