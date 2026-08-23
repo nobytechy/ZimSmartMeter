@@ -59,6 +59,7 @@ export default function BuyPage() {
   const [error, setError] = useState<string | null>(null);
   const [pendingPay, setPendingPay] = useState<PurchasePending | null>(null);
   const [gatewayUrl, setGatewayUrl] = useState<string | null>(null);
+  const [gwStatus, setGwStatus] = useState<string | null>(null);
   const [result, setResult] = useState<PurchaseSuccess | null>(null);
 
   useEffect(() => {
@@ -129,6 +130,10 @@ export default function BuyPage() {
     const poll = setInterval(() => {
       void gatewayCheck(gw, pendingPay.payment_ref).then((res) => {
         if (cancelled || "error" in res) return;
+        if (!res.settled) {
+          setGwStatus(res.outcome);
+          return;
+        }
         if (res.settled) {
           clearInterval(poll);
           if (res.outcome === "paid" && res.receipt.ok && !res.receipt.pending) {
@@ -161,13 +166,15 @@ export default function BuyPage() {
       setError(res.error);
       return;
     }
-    if (res.settled) {
-      if (res.outcome === "paid" && res.receipt.ok && !res.receipt.pending) {
-        setResult(res.receipt);
-        setStep("done");
-      } else {
-        setError("The gateway reported this payment as failed.");
-      }
+    if (!res.settled) {
+      setGwStatus(res.outcome);
+      return;
+    }
+    if (res.outcome === "paid" && res.receipt.ok && !res.receipt.pending) {
+      setResult(res.receipt);
+      setStep("done");
+    } else {
+      setError("The gateway reported this payment as failed.");
     }
   }
 
@@ -477,6 +484,13 @@ export default function BuyPage() {
           >
             {busy ? "Checking…" : "I've paid — check now"}
           </button>
+          {gwStatus && (
+            <p className="text-center font-mono text-xs text-mist">
+              gateway says: {gwStatus} — finish the payment in the checkout
+              tab. PayNow test mode only lets the merchant account fake a
+              success.
+            </p>
+          )}
           {error && <p className="text-sm text-flare">{error}</p>}
           <Link to="/app" className="text-sm text-mist underline underline-offset-4">
             Later — back to dashboard
