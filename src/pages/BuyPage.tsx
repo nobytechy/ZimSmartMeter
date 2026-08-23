@@ -17,10 +17,11 @@ import type {
 import { getActiveTariff } from "../services/tariffs";
 import type { Tariff } from "../services/tariffs";
 import type { Meter } from "../types/meter";
+import { isValidAmount } from "../utils/amount";
 import { formatMeterNumber } from "../utils/meterNumber";
+import { computeKwh } from "../utils/tariff";
 
 const quickAmounts = [5, 10, 20, 50, 100] as const;
-const AMOUNT_RE = /^\d+(\.\d{1,2})?$/;
 
 const reasonMessages: Record<string, string> = {
   bad_amount: "Amount must be $5.00 to $1,000.00, two decimals at most.",
@@ -76,13 +77,10 @@ export default function BuyPage() {
     });
   }, [meterId]);
 
-  const amountValid =
-    AMOUNT_RE.test(amountInput) &&
-    Number(amountInput) >= 5 &&
-    Number(amountInput) <= 1000;
+  const amountValid = isValidAmount(amountInput);
 
   const kwhFor = (a: number) =>
-    tariff ? (a * tariff.rate_kwh_per_usd).toFixed(1) : "—";
+    tariff ? computeKwh(a, tariff.rate_kwh_per_usd).toFixed(1) : "—";
 
   function lockAmount() {
     if (!amountValid) {

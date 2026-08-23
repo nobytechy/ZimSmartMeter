@@ -1,0 +1,9 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# SPA: every route resolves to the app shell; React Router takes it from there.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
