@@ -1,5 +1,6 @@
 import { Link } from "react-router";
 import Mark from "../components/Mark";
+import ProcessAnimation from "../components/ProcessAnimation";
 import AccentLine from "../components/AccentLine";
 
 /** Shared glass surface — the one decorative idea, used consistently. */
@@ -157,7 +158,14 @@ export default function Landing() {
 
       {/* ── How it works ───────────────────────────────────────── */}
       <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
-        <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+        <div className={`${glass} p-4 sm:p-8`}>
+          <ProcessAnimation />
+          <p className="mt-2 text-center text-xs text-mist">
+            One payment event, verified exactly once — watch the duplicate
+            bounce — then credited straight to the meter. No 20-digit token.
+          </p>
+        </div>
+        <h2 className="mt-14 font-mono text-[11px] tracking-widest text-volt uppercase">
           How it works
         </h2>
         <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
