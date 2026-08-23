@@ -2,7 +2,8 @@
 
 **An independent proof-of-concept exploring automated prepaid electricity crediting and smart-meter integration** — built as a modern PWA with React, TypeScript, Supabase, MQTT and an AI energy assistant.
 
-![Status](https://img.shields.io/badge/status-in%20development-orange)
+![CI](https://github.com/nobytechy/ZimSmartMeter/actions/workflows/ci.yml/badge.svg)
+![Status](https://img.shields.io/badge/status-phase%202-blueviolet)
 ![React](https://img.shields.io/badge/React-087ea4?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
@@ -17,7 +18,7 @@
 >
 > ZimSmartMeter is an **independent technical demonstration**. It is **not affiliated with ZESA** or any utility company, does **not** connect to any production utility infrastructure, and uses **no proprietary APIs, credentials, systems, branding, or confidential information**. All meters, payments, readings and balances in this project are **clearly labelled synthetic demo data** (e.g. `DEMO-METER-001`). No real money moves and no real electricity is dispensed.
 
-**Status:** 🚧 In active development — Phase 1 (MVP) in progress
+**Status:** ⚡ Phase 1 complete · Phase 2 (IoT) live · Phase 3 (AI) next
 **Live demo:** _coming after the Phase 1 Netlify deployment_
 
 ---
@@ -38,21 +39,21 @@ ZimSmartMeter simulates that complete loop using production-grade engineering pa
 
 ### Phase 1 — Professional MVP *(in progress)*
 
-- [ ] Landing page and Supabase authentication (sign up, login, protected routes, session persistence)
-- [ ] Register and view demo meters — balance, status, last reading, last communication
-- [ ] Simulated electricity purchase ($10 / $20 / $50 / $100) priced by a configurable tariff model
-- [ ] Idempotent payment processing → automatic meter credit, duplicate-safe at the database level
-- [ ] Transaction history and daily consumption chart
-- [ ] Mobile-first responsive UI, installable as a PWA
-- [ ] PostgreSQL schema with Row Level Security and audit logging
-- [ ] Production deployment to Netlify with a clean, incremental Git history
+- [x] Landing page and Supabase authentication (sign up, login, protected routes, session persistence)
+- [x] Register and view demo meters — balance, status, last reading, last communication
+- [x] Electricity purchase — any amount $5–$1,000 — via **instant (simulated)**, **cash-at-agent**, **ManishaPay**, and **direct PayNow** methods, priced by a configurable tariff
+- [x] Idempotent payment processing → automatic meter credit, duplicate-safe at the database level
+- [x] Transaction history and daily consumption chart
+- [x] Mobile-first responsive UI, installable as a PWA
+- [x] PostgreSQL schema with Row Level Security and audit logging
+- [ ] Production deployment to Netlify with a clean, incremental Git history *(next)*
 
 ### Phase 2 — Smart-meter / IoT simulation
 
-- [ ] Device-like smart meter simulator: connects, authenticates, publishes readings, handles reconnects
-- [ ] MQTT telemetry — voltage, current, power, energy consumed
-- [ ] Credit commands and acknowledgements delivered over MQTT
-- [ ] Realtime dashboard updates via Supabase Realtime (balance, status, new readings, new transactions)
+- [x] Device-like smart meter simulator: connects, authenticates, publishes readings, handles reconnects
+- [x] MQTT telemetry — voltage, current, power, energy consumed
+- [ ] Credit commands and acknowledgements delivered over MQTT *(stretch)*
+- [x] Realtime dashboard updates via Supabase Realtime (balance, status, new readings, new transactions)
 
 ### Phase 3 — AI Energy Assistant
 

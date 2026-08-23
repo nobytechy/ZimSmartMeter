@@ -1,4 +1,4 @@
-import { Suspense, lazy, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import ActivityList from "../components/ActivityList";
 
@@ -7,10 +7,14 @@ import MeterCard from "../components/MeterCard";
 import { glass } from "../components/ui";
 import { useSession } from "../features/auth/sessionContext";
 import { simulatedDailyUsage } from "../features/consumption/simulated";
+import type { DayUsage } from "../features/consumption/simulated";
 import { useMeters } from "../features/meters/useMeters";
 import { useTransactions } from "../features/transactions/useTransactions";
 import { signOut } from "../services/auth";
 import { claimDemoMeter } from "../services/meters";
+import { listUnread, markRead } from "../services/notifications";
+import type { AppNotification } from "../services/notifications";
+import { getDailyConsumption } from "../services/telemetry";
 import { formatMeterNumber } from "../utils/meterNumber";
 import { formatZimPhone } from "../utils/phone";
 
@@ -25,9 +29,33 @@ export default function Dashboard() {
 
   const activeChartMeter =
     (meters ?? []).find((m) => m.id === chartMeterId) ?? (meters ?? [])[0];
+  const [liveUsage, setLiveUsage] = useState<DayUsage[] | null>(null);
+  const [notices, setNotices] = useState<AppNotification[]>([]);
+
+  const chartKey = activeChartMeter
+    ? `${activeChartMeter.id}:${activeChartMeter.balance_kwh}`
+    : null;
+  useEffect(() => {
+    if (!chartKey) return;
+    const id = chartKey.split(":")[0];
+    // oxlint-disable-next-line react/set-state-in-effect
+    void getDailyConsumption(id).then(setLiveUsage);
+  }, [chartKey]);
+
+  useEffect(() => {
+    // oxlint-disable-next-line react/set-state-in-effect
+    void listUnread().then(setNotices);
+  }, [meters]);
+
+  const liveMode = (liveUsage?.length ?? 0) > 0;
   const usage = useMemo(
-    () => (activeChartMeter ? simulatedDailyUsage(activeChartMeter.id) : []),
-    [activeChartMeter],
+    () =>
+      liveMode
+        ? (liveUsage as DayUsage[])
+        : activeChartMeter
+          ? simulatedDailyUsage(activeChartMeter.id)
+          : [],
+    [liveMode, liveUsage, activeChartMeter],
   );
 
   const rawPhone = session?.user.phone ?? "";
@@ -60,12 +88,20 @@ export default function Dashboard() {
         </div>
         <div className="flex items-center gap-4">
           {meters && meters.length > 0 && (
-            <Link
-              to="/app/meters/new"
-              className="rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/5"
-            >
-              + Connect a meter
-            </Link>
+            <>
+              <Link
+                to="/app/simulator"
+                className="rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+              >
+                Simulator
+              </Link>
+              <Link
+                to="/app/meters/new"
+                className="rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+              >
+                + Connect a meter
+              </Link>
+            </>
           )}
           <button
             type="button"
@@ -78,6 +114,29 @@ export default function Dashboard() {
           </button>
         </div>
       </div>
+
+      {notices.map((n) => (
+        <div
+          key={n.id}
+          className="flex items-start justify-between gap-3 rounded-xl border border-volt/30 bg-volt/[0.08] p-4"
+        >
+          <div>
+            <p className="text-sm font-semibold text-volt">{n.title}</p>
+            {n.body && <p className="mt-0.5 text-sm text-mist">{n.body}</p>}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              void markRead(n.id).then(() =>
+                setNotices((prev) => prev.filter((x) => x.id !== n.id)),
+              );
+            }}
+            className="text-sm text-mist underline underline-offset-4"
+          >
+            Dismiss
+          </button>
+        </div>
+      ))}
 
       {loading && (
         <p className="pt-8 text-center font-mono text-sm text-mist">…</p>
@@ -166,8 +225,9 @@ export default function Dashboard() {
                 )}
               </div>
               <p className="mt-2 text-xs text-mist">
-                Simulated preview — live telemetry arrives in Phase 2 over
-                MQTT.
+                {liveMode
+                  ? "Live telemetry — recorded by your meter simulator over MQTT."
+                  : "Simulated preview — start the Simulator and this becomes live telemetry."}
               </p>
             </section>
 
