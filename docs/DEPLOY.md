@@ -25,14 +25,16 @@ vars and Supabase's secret store only.
 From the repo root, logged in and linked
 (`npx supabase login` · `npx supabase link --project-ref <ref>`):
 
+Either set them inline, or — more comfortably — via a local env file:
+
 ```bash
-npx supabase secrets set \
-  PAYNOW_INTEGRATION_ID=<id> \
-  PAYNOW_INTEGRATION_KEY=<key> \
-  PAYNOW_MERCHANT_EMAIL=<merchant login email> \
-  MANISHAPAY_API_KEY=<mp_test_...> \
-  APP_URL=https://<site>.netlify.app
+cp supabase/functions/.env.example supabase/functions/.env
+# fill in the values, then upload the whole file to the secret store:
+npx supabase secrets set --env-file supabase/functions/.env
 ```
+
+(Inline works too: `npx supabase secrets set NAME=value NAME2=value2 …`.)
+The file is gitignored; only the placeholder template is committed.
 
 Test-mode notes: only the PayNow **merchant account** can open the payment
 page and fake a success, and `authemail` must be that account's email —
