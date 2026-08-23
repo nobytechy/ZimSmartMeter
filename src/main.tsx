@@ -1,11 +1,12 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
-import AppShell from "./layouts/AppShell";
 import RequireAuth from "./features/auth/RequireAuth";
 import { SessionProvider } from "./features/auth/SessionProvider";
-import Landing from "./pages/Landing";
+import AppShell from "./layouts/AppShell";
+import AddMeter from "./pages/AddMeter";
 import Dashboard from "./pages/Dashboard";
+import Landing from "./pages/Landing";
 import Login from "./pages/Login";
 import "./styles/index.css";
 
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
             <Route path="login" element={<Login />} />
             <Route element={<RequireAuth />}>
               <Route path="app" element={<Dashboard />} />
+              <Route path="app/meters/new" element={<AddMeter />} />
             </Route>
           </Route>
         </Routes>
