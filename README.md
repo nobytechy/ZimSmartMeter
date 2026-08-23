@@ -19,7 +19,7 @@
 > ZimSmartMeter is an **independent technical demonstration**. It is **not affiliated with ZESA** or any utility company, does **not** connect to any production utility infrastructure, and uses **no proprietary APIs, credentials, systems, branding, or confidential information**. All meters, payments, readings and balances in this project are **clearly labelled synthetic demo data** (e.g. `DEMO-METER-001`). No real money moves and no real electricity is dispensed.
 
 **Status:** ⚡ Phase 1 complete · Phase 2 (IoT) live · Phase 3 (AI) next
-**Live demo:** _coming after the Phase 1 Netlify deployment_
+**Live demo:** [zimsmartmeter.netlify.app](https://zimsmartmeter.netlify.app)
 
 ---
 
@@ -46,7 +46,7 @@ ZimSmartMeter simulates that complete loop using production-grade engineering pa
 - [x] Transaction history and daily consumption chart
 - [x] Mobile-first responsive UI, installable as a PWA
 - [x] PostgreSQL schema with Row Level Security and audit logging
-- [ ] Production deployment to Netlify with a clean, incremental Git history *(next)*
+- [x] Production deployment to Netlify with a clean, incremental Git history
 
 ### Phase 2 — Smart-meter / IoT simulation
 
@@ -306,13 +306,11 @@ Consumption anomaly detection · weekly usage summaries · estimated depletion n
 
 ---
 
-## Screenshots
-
-_Coming with the Phase 1 dashboard._
-
 ## Live demo
 
-_Coming after the Phase 1 Netlify deployment._
+**[zimsmartmeter.netlify.app](https://zimsmartmeter.netlify.app)** — sign in with a demo number
+(`+263 77 000 0001`, code `123456`), claim a meter, buy power, then open
+the Simulator and watch the balance drain live.
 
 ---
 
