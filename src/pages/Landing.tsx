@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 import Mark from "../components/Mark";
 import ProcessAnimation from "../components/ProcessAnimation";
+import WhatsAppFab from "../components/WhatsAppFab";
 import AccentLine from "../components/AccentLine";
 
 /** Shared glass surface — the one decorative idea, used consistently. */
@@ -43,6 +44,7 @@ const stack = [
 export default function Landing() {
   return (
     <div className="min-h-dvh bg-night text-paper">
+      <WhatsAppFab />
       {/* ── Navbar ─────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-night/70 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
