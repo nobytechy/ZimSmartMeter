@@ -86,7 +86,7 @@ function mapStatus(raw: string): "paid" | "failed" | "pending" {
   return "pending"; // Created / Sent / anything unknown stays pending
 }
 
-Deno.serve(async (req) => {
+async function handle(req: Request): Promise<Response> {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -213,4 +213,16 @@ Deno.serve(async (req) => {
   }
 
   return json({ error: "unknown_action" }, 400);
+}
+
+Deno.serve(async (req) => {
+  try {
+    return await handle(req);
+  } catch (e) {
+    // A crash must still answer with CORS and a name — never a bare 500.
+    return json(
+      { error: "unhandled: " + (e instanceof Error ? e.message : String(e)) },
+      500,
+    );
+  }
 });
