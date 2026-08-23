@@ -98,8 +98,17 @@ async function handle(req: Request): Promise<Response> {
     });
     const out = await res.json().catch(() => ({}));
     if (!res.ok || !out?.data?.ok) {
+      // ManishaPay nests reasons: { error: { code, message, resolution } }.
+      const e = out?.error ?? {};
+      console.error("[gateway] initiate failed", res.status, JSON.stringify(out).slice(0, 500));
       return json(
-        { error: out?.message ?? "gateway_error", requestId: out?.requestId },
+        {
+          error: e.message ?? out?.message ?? "gateway_error",
+          code: e.code,
+          resolution: e.resolution,
+          upstream_status: res.status,
+          requestId: out?.requestId,
+        },
         502,
       );
     }
@@ -127,8 +136,16 @@ async function handle(req: Request): Promise<Response> {
     );
     const out = await res.json().catch(() => ({}));
     if (!res.ok) {
+      const e = out?.error ?? {};
+      console.error("[gateway] status failed", res.status, JSON.stringify(out).slice(0, 500));
       return json(
-        { error: out?.message ?? "gateway_error", requestId: out?.requestId },
+        {
+          error: e.message ?? out?.message ?? "gateway_error",
+          code: e.code,
+          resolution: e.resolution,
+          upstream_status: res.status,
+          requestId: out?.requestId,
+        },
         502,
       );
     }
