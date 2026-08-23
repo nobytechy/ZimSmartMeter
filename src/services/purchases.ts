@@ -1,4 +1,16 @@
+import { FunctionsHttpError } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
+
+/** Non-2xx function replies carry our JSON reason — surface it, not boilerplate. */
+async function functionError(error: unknown): Promise<string> {
+  if (error instanceof FunctionsHttpError) {
+    const body = (await error.context.json().catch(() => null)) as {
+      error?: string;
+    } | null;
+    if (body?.error) return body.error;
+  }
+  return error instanceof Error ? error.message : "gateway_error";
+}
 
 export type PurchaseSuccess = {
   ok: true;
@@ -78,7 +90,7 @@ export async function gatewayInitiate(
   const { data, error } = await supabase.functions.invoke(method, {
     body: { action: "initiate", payment_ref: paymentRef },
   });
-  if (error) return { error: error.message };
+  if (error) return { error: await functionError(error) };
   return data as GatewayInitiate;
 }
 
@@ -89,6 +101,6 @@ export async function gatewayCheck(
   const { data, error } = await supabase.functions.invoke(method, {
     body: { action: "status", payment_ref: paymentRef },
   });
-  if (error) return { error: error.message };
+  if (error) return { error: await functionError(error) };
   return data as GatewayStatus;
 }
