@@ -1,6 +1,7 @@
 import { Link, Outlet } from "react-router";
 import AccentLine from "../components/AccentLine";
 import Mark from "../components/Mark";
+import { useOnline } from "../hooks/useOnline";
 
 /**
  * The product shell: full-width night theme shared with the marketing
@@ -8,6 +9,7 @@ import Mark from "../components/Mark";
  * get the whole screen (bounded at max-w-6xl for line-length sanity).
  */
 export default function AppShell() {
+  const online = useOnline();
   return (
     <div className="relative flex min-h-dvh flex-col bg-night text-paper">
       <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
@@ -23,8 +25,15 @@ export default function AppShell() {
               ZimSmartMeter
             </span>
           </Link>
-          <span className="rounded bg-volt px-1.5 py-0.5 font-mono text-[11px] font-medium tracking-widest text-ink uppercase">
-            demo
+          <span className="flex items-center gap-2">
+            {!online && (
+              <span className="rounded border border-volt/40 px-1.5 py-0.5 font-mono text-[11px] font-medium tracking-widest text-volt uppercase">
+                offline · last known data
+              </span>
+            )}
+            <span className="rounded bg-volt px-1.5 py-0.5 font-mono text-[11px] font-medium tracking-widest text-ink uppercase">
+              demo
+            </span>
           </span>
         </div>
         <AccentLine />
