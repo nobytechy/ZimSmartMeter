@@ -3,12 +3,13 @@ import { Link, useParams } from "react-router";
 import { fieldDark, glass } from "../components/ui";
 import { getMeter } from "../services/meters";
 import {
-  checkManishaPay,
   confirmCashPayment,
-  initiateManishaPay,
+  gatewayCheck,
+  gatewayInitiate,
   purchaseElectricity,
 } from "../services/purchases";
 import type {
+  GatewayMethod,
   PaymentMethod,
   PurchasePending,
   PurchaseSuccess,
@@ -106,7 +107,7 @@ export default function BuyPage() {
     }
     if (res.pending) {
       setPendingPay(res);
-      setStep(res.method === "manishapay" ? "gatewayPending" : "cashPending");
+      setStep(res.method === "cash" ? "cashPending" : "gatewayPending");
       return;
     }
     setResult(res);
@@ -117,7 +118,8 @@ export default function BuyPage() {
     if (step !== "gatewayPending" || !pendingPay) return;
     let cancelled = false;
 
-    void initiateManishaPay(pendingPay.payment_ref).then((res) => {
+    const gw = pendingPay.method as GatewayMethod;
+    void gatewayInitiate(gw, pendingPay.payment_ref).then((res) => {
       if (cancelled) return;
       if ("error" in res) {
         setError(res.error);
@@ -127,7 +129,7 @@ export default function BuyPage() {
     });
 
     const poll = setInterval(() => {
-      void checkManishaPay(pendingPay.payment_ref).then((res) => {
+      void gatewayCheck(gw, pendingPay.payment_ref).then((res) => {
         if (cancelled || "error" in res) return;
         if (res.settled) {
           clearInterval(poll);
@@ -152,7 +154,10 @@ export default function BuyPage() {
     if (!pendingPay) return;
     setBusy(true);
     setError(null);
-    const res = await checkManishaPay(pendingPay.payment_ref);
+    const res = await gatewayCheck(
+      pendingPay.method as GatewayMethod,
+      pendingPay.payment_ref,
+    );
     setBusy(false);
     if ("error" in res) {
       setError(res.error);
@@ -300,17 +305,20 @@ export default function BuyPage() {
                 Reserve a reference, pay cash, agent confirms.
               </p>
             </button>
-            <div className={`${glass} p-4 opacity-50`}>
-              <div className="flex items-center gap-2 font-semibold">
-                Paynow
-                <span className="rounded bg-volt/15 px-1.5 py-0.5 font-mono text-[10px] tracking-widest text-volt uppercase">
-                  next
-                </span>
-              </div>
+            <button
+              type="button"
+              onClick={() => {
+                setMethod("paynow");
+                setStep("confirm");
+              }}
+              className={`${glass} p-4 text-left hover:border-volt/50`}
+            >
+              <div className="font-semibold">PayNow · direct</div>
               <p className="mt-1 text-sm text-mist">
-                Direct gateway — arriving with its integration.
+                The raw gateway protocol — EcoCash, OneMoney, cards. Test
+                mode.
               </p>
-            </div>
+            </button>
             <button
               type="button"
               onClick={() => {
@@ -354,7 +362,9 @@ export default function BuyPage() {
                   ? "Cash at agent"
                   : method === "manishapay"
                     ? "ManishaPay"
-                    : "Instant"}
+                    : method === "paynow"
+                      ? "PayNow (direct)"
+                      : "Instant"}
               </span>
             </div>
             <div className="flex justify-between">
@@ -428,7 +438,7 @@ export default function BuyPage() {
       {step === "gatewayPending" && pendingPay && (
         <>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Pay with ManishaPay
+            Pay with {pendingPay.method === "paynow" ? "PayNow" : "ManishaPay"}
           </h1>
           <div className="rounded-xl bg-lcd p-5 font-mono">
             <div className="text-[11px] tracking-widest text-mist uppercase">
@@ -448,7 +458,8 @@ export default function BuyPage() {
               rel="noreferrer"
               className="rounded-xl bg-volt px-5 py-4 text-center text-[15px] font-semibold text-ink active:brightness-95"
             >
-              Open ManishaPay checkout
+              Open {pendingPay.method === "paynow" ? "PayNow" : "ManishaPay"}{" "}
+              checkout
             </a>
           ) : (
             <p className="text-center font-mono text-sm text-mist">
@@ -498,7 +509,9 @@ export default function BuyPage() {
                 ? "cash"
                 : result.method === "manishapay"
                   ? "ManishaPay"
-                  : "instant"}
+                  : result.method === "paynow"
+                    ? "PayNow"
+                    : "instant"}
             </div>
           </div>
           {result.duplicate && (

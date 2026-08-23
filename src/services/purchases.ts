@@ -69,20 +69,24 @@ export type GatewayStatus =
   | { settled: false; outcome: string }
   | { error: string };
 
-export async function initiateManishaPay(
+export type GatewayMethod = "manishapay" | "paynow";
+
+export async function gatewayInitiate(
+  method: GatewayMethod,
   paymentRef: string,
 ): Promise<GatewayInitiate> {
-  const { data, error } = await supabase.functions.invoke("manishapay", {
+  const { data, error } = await supabase.functions.invoke(method, {
     body: { action: "initiate", payment_ref: paymentRef },
   });
   if (error) return { error: error.message };
   return data as GatewayInitiate;
 }
 
-export async function checkManishaPay(
+export async function gatewayCheck(
+  method: GatewayMethod,
   paymentRef: string,
 ): Promise<GatewayStatus> {
-  const { data, error } = await supabase.functions.invoke("manishapay", {
+  const { data, error } = await supabase.functions.invoke(method, {
     body: { action: "status", payment_ref: paymentRef },
   });
   if (error) return { error: error.message };
