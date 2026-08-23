@@ -36,3 +36,17 @@ export async function claimDemoMeter(): Promise<ClaimResult> {
   if (error) return { ok: false, reason: error.message };
   return data as ClaimResult;
 }
+
+export async function getMeter(id: string): Promise<{
+  data: Meter | null;
+  error: string | null;
+}> {
+  const { data, error } = await supabase
+    .from("meters")
+    .select(
+      "id, meter_number, nickname, balance_kwh, status, last_seen_at, created_at",
+    )
+    .eq("id", id)
+    .maybeSingle();
+  return { data: (data as Meter) ?? null, error: error?.message ?? null };
+}

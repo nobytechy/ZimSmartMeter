@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 import type { Meter } from "../types/meter";
 import { formatMeterNumber } from "../utils/meterNumber";
 import { glass } from "./ui";
@@ -38,6 +39,12 @@ export default function MeterCard({ meter }: { meter: Meter }) {
           {formatMeterNumber(meter.meter_number)}
         </p>
       )}
+      <Link
+        to={`/app/meters/${meter.id}/buy`}
+        className="mt-3 block rounded-lg bg-credit py-2.5 text-center text-sm font-semibold text-white active:bg-credit-deep"
+      >
+        Buy electricity
+      </Link>
     </div>
   );
 }

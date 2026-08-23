@@ -5,6 +5,7 @@ import RequireAuth from "./features/auth/RequireAuth";
 import { SessionProvider } from "./features/auth/SessionProvider";
 import AppShell from "./layouts/AppShell";
 import AddMeter from "./pages/AddMeter";
+import BuyPage from "./pages/BuyPage";
 import Dashboard from "./pages/Dashboard";
 import Landing from "./pages/Landing";
 import Login from "./pages/Login";
@@ -21,6 +22,7 @@ createRoot(document.getElementById("root")!).render(
             <Route element={<RequireAuth />}>
               <Route path="app" element={<Dashboard />} />
               <Route path="app/meters/new" element={<AddMeter />} />
+              <Route path="app/meters/:meterId/buy" element={<BuyPage />} />
             </Route>
           </Route>
         </Routes>
