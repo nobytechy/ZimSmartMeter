@@ -4,6 +4,7 @@ import { BrowserRouter, Route, Routes } from "react-router";
 import RequireAuth from "./features/auth/RequireAuth";
 import { SessionProvider } from "./features/auth/SessionProvider";
 import AppShell from "./layouts/AppShell";
+import Assistant from "./pages/Assistant";
 import Activity from "./pages/Activity";
 import AddMeter from "./pages/AddMeter";
 import BuyPage from "./pages/BuyPage";
@@ -26,6 +27,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="app/meters/new" element={<AddMeter />} />
               <Route path="app/meters/:meterId/buy" element={<BuyPage />} />
               <Route path="app/activity" element={<Activity />} />
+              <Route path="app/assistant" element={<Assistant />} />
               <Route path="app/simulator" element={<SimulatorRoute />} />
             </Route>
           </Route>

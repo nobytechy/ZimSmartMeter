@@ -18,7 +18,7 @@
 >
 > ZimSmartMeter is an **independent technical demonstration**. It is **not affiliated with ZESA** or any utility company, does **not** connect to any production utility infrastructure, and uses **no proprietary APIs, credentials, systems, branding, or confidential information**. All meters, payments, readings and balances in this project are **clearly labelled synthetic demo data** (e.g. `DEMO-METER-001`). No real money moves and no real electricity is dispensed.
 
-**Status:** ⚡ Phase 1 complete · Phase 2 (IoT) live · Phase 3 (AI) next
+**Status:** ⚡ All three phases live — payments, IoT telemetry, AI assistant
 **Live demo:** [zimsmartmeter.netlify.app](https://zimsmartmeter.netlify.app)
 
 ---
@@ -57,9 +57,9 @@ ZimSmartMeter simulates that complete loop using production-grade engineering pa
 
 ### Phase 3 — AI Energy Assistant
 
-- [ ] LLM assistant with **controlled tool calling** — no unrestricted database access
-- [ ] Balance queries, consumption comparisons, and depletion estimates in natural language
-- [ ] Guardrails: never invents readings or transactions, labels estimates as estimates, respects per-user authorization
+- [x] LLM assistant with **controlled tool calling** — no unrestricted database access
+- [x] Balance queries, consumption comparisons, and depletion estimates in natural language
+- [x] Guardrails: never invents readings or transactions, labels estimates as estimates, respects per-user authorization
 
 ---
 

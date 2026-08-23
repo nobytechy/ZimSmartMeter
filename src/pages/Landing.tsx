@@ -200,11 +200,6 @@ export default function Landing() {
             <div key={title} className={`${glass} p-6`}>
               <div className="flex items-center gap-2">
                 <h3 className="font-semibold">{title}</h3>
-                {title === "AI energy assistant" && (
-                  <span className="rounded bg-volt/15 px-1.5 py-0.5 font-mono text-[10px] tracking-widest text-volt uppercase">
-                    Phase 3
-                  </span>
-                )}
               </div>
               <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
             </div>

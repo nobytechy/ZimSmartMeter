@@ -102,6 +102,12 @@ export default function Dashboard() {
           {meters && meters.length > 0 && (
             <>
               <Link
+                to="/app/assistant"
+                className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
+              >
+                AI Assistant
+              </Link>
+              <Link
                 to="/app/simulator"
                 className="rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/5"
               >

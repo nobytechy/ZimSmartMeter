@@ -2,7 +2,7 @@ import { FunctionsHttpError } from "@supabase/supabase-js";
 import { supabase } from "../lib/supabase";
 
 /** Non-2xx function replies carry our JSON reason — surface it, not boilerplate. */
-async function functionError(error: unknown): Promise<string> {
+export async function functionError(error: unknown): Promise<string> {
   if (error instanceof FunctionsHttpError) {
     const body = (await error.context.json().catch(() => null)) as {
       error?: string;
