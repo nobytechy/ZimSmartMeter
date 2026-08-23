@@ -31,6 +31,7 @@
   --color-phosphor: #45e08c;
   --color-mist: #a9b4d6;
   --color-night: #0b1129;
+  --color-flare: #ff8a80; /* danger, readable on night */
 }
 
 body {

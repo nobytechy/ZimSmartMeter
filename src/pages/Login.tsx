@@ -3,6 +3,7 @@ import { Navigate, useNavigate } from "react-router";
 import { useSession } from "../features/auth/sessionContext";
 import { requestOtp, verifyOtp } from "../services/auth";
 import { formatZimPhone, normalizeZimPhone } from "../utils/phone";
+import { fieldDark, glass } from "../components/ui";
 
 const demoNumbers = ["0770000001", "0770000002", "0770000003"] as const;
 
@@ -55,12 +56,12 @@ export default function Login() {
   }
 
   return (
-    <div className="flex flex-col gap-6 pt-8">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-6 pt-10 pb-16">
       {step === "phone" ? (
         <>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
-            <p className="mt-1 text-[15px] text-ink-soft">
+            <p className="mt-1 text-[15px] text-mist">
               We send a one-time code to your phone.
             </p>
           </div>
@@ -81,19 +82,19 @@ export default function Login() {
               placeholder="07… or +263 7…"
               value={phoneInput}
               onChange={(e) => setPhoneInput(e.target.value)}
-              className="rounded-xl border border-line bg-white px-4 py-3.5 font-mono text-[15px] outline-none focus:border-credit"
+              className={`${fieldDark} font-mono text-[15px]`}
             />
             <button
               type="submit"
               disabled={busy}
-              className="rounded-xl bg-credit px-5 py-4 text-[15px] font-semibold text-white active:bg-credit-deep disabled:opacity-60"
+              className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
               {busy ? "Sending…" : "Send code"}
             </button>
           </form>
 
-          <div className="rounded-xl border border-line bg-white p-4">
-            <p className="font-mono text-[11px] tracking-widest text-ink-soft uppercase">
+          <div className={`${glass} p-4`}>
+            <p className="font-mono text-[11px] tracking-widest text-mist uppercase">
               Demo access · no SMS needed
             </p>
             <div className="mt-3 flex flex-col gap-2">
@@ -106,13 +107,13 @@ export default function Login() {
                     setPhoneInput(n);
                     void sendCode(n);
                   }}
-                  className="rounded-lg border border-line px-4 py-3 text-left font-mono text-sm active:bg-paper"
+                  className="rounded-lg border border-white/10 px-4 py-3 text-left font-mono text-sm text-paper hover:bg-white/5 active:bg-white/10"
                 >
                   {formatZimPhone(normalizeZimPhone(n) ?? n)}
                 </button>
               ))}
             </div>
-            <p className="mt-3 text-xs text-ink-soft">
+            <p className="mt-3 text-xs text-mist">
               Code for every demo number: <span className="font-mono">123456</span>
             </p>
           </div>
@@ -123,7 +124,7 @@ export default function Login() {
             <h1 className="text-2xl font-semibold tracking-tight">
               Enter the code
             </h1>
-            <p className="mt-1 text-[15px] text-ink-soft">
+            <p className="mt-1 text-[15px] text-mist">
               Sent to {formatZimPhone(phone)} — demo numbers use{" "}
               <span className="font-mono">123456</span>.
             </p>
@@ -143,12 +144,12 @@ export default function Login() {
               placeholder="••••••"
               value={code}
               onChange={(e) => setCode(e.target.value.replace(/\D/g, ""))}
-              className="rounded-xl border border-line bg-white px-4 py-3.5 text-center font-mono text-2xl tracking-[0.5em] outline-none focus:border-credit"
+              className={`${fieldDark} text-center font-mono text-2xl tracking-[0.5em]`}
             />
             <button
               type="submit"
               disabled={busy}
-              className="rounded-xl bg-credit px-5 py-4 text-[15px] font-semibold text-white active:bg-credit-deep disabled:opacity-60"
+              className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
               {busy ? "Checking…" : "Verify & sign in"}
             </button>
@@ -158,14 +159,14 @@ export default function Login() {
                 setStep("phone");
                 setError(null);
               }}
-              className="py-2 text-sm text-ink-soft underline underline-offset-4"
+              className="py-2 text-sm text-mist underline underline-offset-4"
             >
               Change number
             </button>
           </form>
         </>
       )}
-      {error && <p className="text-sm text-danger">{error}</p>}
+      {error && <p className="text-sm text-flare">{error}</p>}
     </div>
   );
 }
