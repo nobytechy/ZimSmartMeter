@@ -82,6 +82,7 @@ async function handle(req: Request): Promise<Response> {
       headers: {
         Authorization: `Bearer ${MANISHAPAY_API_KEY}`,
         "Content-Type": "application/json",
+        "Idempotency-Key": payment.payment_ref,
       },
       body: JSON.stringify({
         provider: "paynow",
@@ -91,7 +92,7 @@ async function handle(req: Request): Promise<Response> {
       }),
     });
     const out = await res.json().catch(() => ({}));
-    if (!res.ok || !out?.data?.ok) {
+    if (!res.ok || !out?.data) {
       // ManishaPay nests reasons: { error: { code, message, resolution } }.
       const e = out?.error ?? {};
       console.error("[gateway] initiate failed", res.status, JSON.stringify(out).slice(0, 500));
@@ -110,7 +111,7 @@ async function handle(req: Request): Promise<Response> {
       ok: true,
       browser_url: out.data.browser_url ?? null,
       instructions: out.data.instructions ?? null,
-      status: out.data.status,
+      status: out.data.status_normalized ?? out.data.status ?? "pending",
     });
   }
 
@@ -143,21 +144,29 @@ async function handle(req: Request): Promise<Response> {
       );
     }
 
-    const status: string = out?.data?.status ?? "pending";
+    const d = out?.data ?? {};
+    const normalized = String(d.status_normalized ?? d.status ?? "pending")
+      .toLowerCase();
+    const outcome =
+      normalized === "paid"
+        ? "paid"
+        : ["failed", "cancelled", "disputed"].includes(normalized)
+          ? "failed"
+          : "pending";
     const providerRef: string | null =
-      out?.data?.live?.provider_reference ?? null;
+      d.paynow_reference ?? d.tracker ?? null;
 
-    if (status === "paid" || status === "failed") {
+    if (outcome !== "pending") {
       const { data, error } = await svc.rpc("settle_gateway_payment", {
         p_payment_ref: payment.payment_ref,
-        p_outcome: status,
+        p_outcome: outcome,
         p_provider_ref: providerRef,
       });
       if (error) return json({ error: error.message }, 500);
-      return json({ settled: true, outcome: status, receipt: data });
+      return json({ settled: true, outcome, receipt: data });
     }
 
-    return json({ settled: false, outcome: status });
+    return json({ settled: false, outcome: d.status ?? "pending" });
   }
 
   return json({ error: "unknown_action" }, 400);
