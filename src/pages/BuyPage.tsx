@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { fieldDark, glass } from "../components/ui";
 import { getMeter } from "../services/meters";
 import { purchaseElectricity } from "../services/purchases";
@@ -19,7 +19,6 @@ const denominations = [10, 20, 50, 100] as const;
  */
 export default function BuyPage() {
   const { meterId } = useParams<{ meterId: string }>();
-  const navigate = useNavigate();
   const [meter, setMeter] = useState<Meter | null>(null);
   const [tariff, setTariff] = useState<Tariff | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
