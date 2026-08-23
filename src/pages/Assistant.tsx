@@ -9,6 +9,7 @@ const suggestions = [
   "Compare this week to last week",
   "What were my last purchases?",
   "Is my meter online?",
+  "If I buy $20, how long will that last?",
 ] as const;
 
 /**
@@ -16,7 +17,13 @@ const suggestions = [
  * data through server-side tools — the model never touches the database.
  */
 export default function Assistant() {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(() => {
+    try {
+      return JSON.parse(sessionStorage.getItem("zsm.chat") ?? "[]");
+    } catch {
+      return [];
+    }
+  });
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,6 +33,11 @@ export default function Assistant() {
     endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, busy]);
 
+  // The thread survives navigation — follow-ups keep their context.
+  useEffect(() => {
+    sessionStorage.setItem("zsm.chat", JSON.stringify(messages.slice(-24)));
+  }, [messages]);
+
   async function send(text: string) {
     const question = text.trim();
     if (!question || busy) return;
@@ -34,7 +46,7 @@ export default function Assistant() {
     setInput("");
     setBusy(true);
     setError(null);
-    const res = await askAssistant(next);
+    const res = await askAssistant(next.slice(-16));
     setBusy(false);
     if (res.error || !res.reply) {
       setError(res.error ?? "The assistant went quiet — try again.");
@@ -54,9 +66,24 @@ export default function Assistant() {
             Answers come only from your meter's data. Estimates are labelled.
           </p>
         </div>
-        <Link to="/app" className="text-sm text-mist underline underline-offset-4">
-          Dashboard
-        </Link>
+        <div className="flex items-center gap-4">
+          {messages.length > 0 && (
+            <button
+              type="button"
+              onClick={() => {
+                setMessages([]);
+                setError(null);
+                sessionStorage.removeItem("zsm.chat");
+              }}
+              className="font-mono text-xs text-mist underline underline-offset-4"
+            >
+              new chat
+            </button>
+          )}
+          <Link to="/app" className="text-sm text-mist underline underline-offset-4">
+            Dashboard
+          </Link>
+        </div>
       </div>
 
       <div className={`${glass} flex min-h-[50vh] flex-col gap-3 p-4`}>
