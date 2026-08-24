@@ -88,6 +88,14 @@ ZimSmartMeter simulates that complete loop using production-grade engineering pa
 - [ ] Credit commands and acknowledgements delivered over MQTT *(stretch)*
 - [x] Realtime dashboard updates via Supabase Realtime (balance, status, new readings, new transactions)
 
+### Interface & experience ✅
+
+- [x] Four-language interface (English · chiShona · isiNdebele · 中文) with a persistent toggle on every screen
+- [x] Auth-gated navigation: the sidebar and drawer exist only for a signed-in session
+- [x] Idle-session guard — inactivity warning with a live countdown, then automatic sign-out
+- [x] Loading indicators on every asynchronous action, so nothing ever looks frozen
+- [x] Scroll-reveal marketing page, back-to-top and WhatsApp contact buttons, installable PWA
+
 ### Phase 3 — AI Energy Assistant ✅
 
 - [x] LLM assistant with **controlled tool calling** — no unrestricted database access
