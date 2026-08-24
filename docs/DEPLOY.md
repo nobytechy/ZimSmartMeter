@@ -20,6 +20,21 @@ vars and Supabase's secret store only.
 
 4. Deploy. Note the site URL — call it `https://<site>.netlify.app`.
 
+### Deploying somewhere other than Netlify
+
+The repo carries SPA routing config for all three common hosts, so any of
+them work unchanged — build command `npm run build`, output directory
+`dist`, plus the two `VITE_` environment variables:
+
+| Host | Config file | Notes |
+|---|---|---|
+| Netlify | `netlify.toml` | Build settings read automatically |
+| Cloudflare Pages | `public/_redirects` | Import from GitHub, set framework preset to Vite |
+| Vercel | `vercel.json` | Import from GitHub, framework auto-detected |
+
+Whichever you use, set `APP_URL` (below) to that host's domain so payment
+gateways return to the right place.
+
 ## 2 · Supabase secrets (Edge Functions)
 
 From the repo root, logged in and linked
