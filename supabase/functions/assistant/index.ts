@@ -14,7 +14,10 @@ import type { SupabaseClient } from "jsr:@supabase/supabase-js@2";
 
 const AI_BASE_URL =
   Deno.env.get("AI_BASE_URL") ?? "https://api.groq.com/openai/v1";
-const AI_MODEL = Deno.env.get("AI_MODEL") ?? "llama-3.3-70b-versatile";
+// Groq deprecated llama-3.3-70b-versatile (June 2026); gpt-oss-120b is the
+// recommended successor — strong tool calling, faster, cheaper. Override
+// with the AI_MODEL secret to swap brains without touching code.
+const AI_MODEL = Deno.env.get("AI_MODEL") ?? "openai/gpt-oss-120b";
 const AI_API_KEY = Deno.env.get("AI_API_KEY") ?? "";
 
 const corsHeaders = {

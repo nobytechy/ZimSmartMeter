@@ -110,8 +110,13 @@ export default function Dashboard() {
               </Link>
               <Link
                 to="/app/simulator"
-                className="rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/5"
+                title="Run the virtual smart meter — telemetry over MQTT"
+                className="flex items-center gap-2 rounded-lg border border-volt/40 bg-volt/10 px-4 py-2 text-sm font-semibold text-volt hover:bg-volt/15"
               >
+                <span aria-hidden className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-volt opacity-75 motion-safe:animate-ping" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-volt" />
+                </span>
                 Simulator
               </Link>
               <Link
