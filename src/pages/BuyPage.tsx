@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import Spinner from "../components/Spinner";
 import { Link, useParams } from "react-router";
 import { fieldDark, glass } from "../components/ui";
 import { getMeter } from "../services/meters";
@@ -389,8 +390,7 @@ export default function BuyPage() {
             onClick={() => void pay()}
             className="rounded-xl bg-credit px-5 py-4 text-[15px] font-semibold text-white active:bg-credit-deep disabled:opacity-60"
           >
-            {busy
-              ? t("buy.processing")
+            {busy ? <><Spinner className="mr-2" />{t("buy.processing")}</>
               : method === "instant"
                 ? `Pay $${amount.toFixed(2)} (simulated)`
                 : t("buy.reserve")}
@@ -469,8 +469,9 @@ export default function BuyPage() {
               checkout
             </a>
           ) : (
-            <p className="text-center font-mono text-sm text-mist">
-              Preparing checkout…
+            <p className="flex items-center justify-center gap-2 text-center font-mono text-sm text-mist">
+              <Spinner />
+              {t("buy.preparing")}
             </p>
           )}
           <p className="text-sm leading-relaxed text-mist">
@@ -484,7 +485,7 @@ export default function BuyPage() {
             onClick={() => void checkNow()}
             className="rounded-xl border border-white/15 px-5 py-4 text-[15px] font-semibold hover:bg-white/5 disabled:opacity-60"
           >
-            {busy ? t("buy.checking") : t("buy.checkNow")}
+            {busy ? <><Spinner className="mr-2" />{t("buy.checking")}</> : t("buy.checkNow")}
           </button>
           {gwStatus && (
             <p className="text-center font-mono text-xs text-mist">

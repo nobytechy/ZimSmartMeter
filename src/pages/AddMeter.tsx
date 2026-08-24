@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Spinner from "../components/Spinner";
 import { Link, useNavigate } from "react-router";
 import { glass, fieldDark } from "../components/ui";
 import { claimMeter } from "../services/meters";
@@ -90,7 +91,7 @@ export default function AddMeter() {
           disabled={!valid || busy}
           className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
         >
-          {busy ? t("meter.verifying") : t("meter.verifyConnect")}
+          {busy ? <><Spinner className="mr-2" />{t("meter.verifying")}</> : t("meter.verifyConnect")}
         </button>
       </form>
 

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Spinner from "../components/Spinner";
 import { Navigate, useNavigate } from "react-router";
 import { useSession } from "../features/auth/sessionContext";
 import { requestOtp, verifyOtp } from "../services/auth";
@@ -91,7 +92,7 @@ export default function Login() {
               disabled={busy}
               className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {busy ? t("login.sending") : t("login.send")}
+              {busy ? <><Spinner className="mr-2" />{t("login.sending")}</> : t("login.send")}
             </button>
           </form>
 
@@ -153,7 +154,7 @@ export default function Login() {
               disabled={busy}
               className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {busy ? t("login.sending") : t("login.verify")}
+              {busy ? <><Spinner className="mr-2" />{t("login.sending")}</> : t("login.verify")}
             </button>
             <button
               type="button"

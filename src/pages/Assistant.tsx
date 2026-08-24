@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import Spinner from "../components/Spinner";
 import { fieldDark, glass } from "../components/ui";
 import { useT } from "../i18n/context";
 import {
@@ -218,7 +219,7 @@ export default function Assistant() {
               disabled={busy || !input.trim()}
               className="rounded-xl bg-volt px-5 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {t("chat.ask")}
+              {busy ? <Spinner /> : t("chat.ask")}
             </button>
           </form>
         </div>

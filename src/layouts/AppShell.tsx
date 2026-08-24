@@ -1,9 +1,12 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router";
 import AccentLine from "../components/AccentLine";
 import LanguageToggle from "../components/LanguageToggle";
+import Spinner from "../components/Spinner";
 import Mark from "../components/Mark";
 import { useOnline } from "../hooks/useOnline";
+import { useIdleLogout } from "../hooks/useIdleLogout";
+import { useSession } from "../features/auth/sessionContext";
 import { useT } from "../i18n/context";
 import { signOut } from "../services/auth";
 
@@ -55,12 +58,28 @@ export default function AppShell() {
   const online = useOnline();
   const navigate = useNavigate();
   const [drawer, setDrawer] = useState(false);
+  const { session } = useSession();
+  const signedIn = Boolean(session);
+  const [signingOut, setSigningOut] = useState(false);
 
   const t = useT();
 
-  const signOutNow = () => {
-    void signOut().then(() => navigate("/login", { replace: true }));
-  };
+  const signOutNow = useCallback(() => {
+    setSigningOut(true);
+    setDrawer(false);
+    void signOut().finally(() => {
+      setSigningOut(false);
+      navigate("/login", { replace: true });
+    });
+  }, [navigate]);
+
+  // Idle guard runs only for a signed-in session.
+  const { warning, secondsLeft, staySignedIn } = useIdleLogout(
+    () => {
+      if (signedIn) signOutNow();
+    },
+    { idleMs: 10 * 60_000, graceMs: 60_000 },
+  );
 
   return (
     <div className="relative min-h-dvh bg-night text-paper">
@@ -72,6 +91,7 @@ export default function AppShell() {
       {/* ── top bar (all sizes) ── */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-night/80 backdrop-blur-xl">
         <div className="flex h-14 items-center gap-3 px-4 lg:px-6">
+          {signedIn && (
           <button
             type="button"
             onClick={() => setDrawer(true)}
@@ -82,6 +102,7 @@ export default function AppShell() {
               <path d="M4 7h16M4 12h16M4 17h16" />
             </svg>
           </button>
+          )}
           <Link
             to="/app"
             onClick={() => setDrawer(false)}
@@ -109,6 +130,7 @@ export default function AppShell() {
 
       <div className="relative flex">
         {/* ── desktop rail ── */}
+        {signedIn && (
         <aside className="sticky top-14 hidden h-[calc(100dvh-3.5rem)] w-60 shrink-0 flex-col justify-between border-r border-white/10 p-4 lg:flex">
           <NavItems />
           <button
@@ -116,12 +138,14 @@ export default function AppShell() {
             onClick={signOutNow}
             className="rounded-lg px-3 py-2.5 text-left text-sm text-mist hover:bg-white/5 hover:text-paper"
           >
+            {signingOut && <Spinner className="mr-2" />}
             {t("nav.signOut")}
           </button>
         </aside>
+        )}
 
         {/* ── mobile drawer ── */}
-        {drawer && (
+        {signedIn && drawer && (
           <div className="fixed inset-0 z-50 lg:hidden">
             <button
               aria-label="Close menu"
@@ -132,7 +156,7 @@ export default function AppShell() {
               <div className="flex flex-col gap-4">
                 <div className="flex items-center gap-2.5 px-1 py-2">
                   <Mark size={22} />
-                  <span className="font-mono text-sm font-medium">Menu</span>
+                  <span className="font-mono text-sm font-medium">{t("nav.menu")}</span>
                 </div>
                 <NavItems onNavigate={() => setDrawer(false)} />
               </div>
@@ -141,6 +165,7 @@ export default function AppShell() {
                 onClick={signOutNow}
                 className="rounded-lg px-3 py-2.5 text-left text-sm text-mist hover:bg-white/5"
               >
+                {signingOut && <Spinner className="mr-2" />}
                 {t("nav.signOut")}
               </button>
             </aside>
@@ -148,6 +173,30 @@ export default function AppShell() {
         )}
 
         <main className="min-w-0 flex-1">
+          {signedIn && warning && (
+            <div className="mx-auto mt-4 flex w-full max-w-5xl flex-wrap items-center justify-between gap-3 rounded-xl border border-volt/40 bg-volt/10 px-4 py-3 lg:px-8">
+              <p className="text-sm text-volt">
+                {t("idle.title")}{" "}
+                <span className="font-mono">{secondsLeft}s</span>
+              </p>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={staySignedIn}
+                  className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
+                >
+                  {t("idle.stay")}
+                </button>
+                <button
+                  type="button"
+                  onClick={signOutNow}
+                  className="text-sm text-mist underline underline-offset-4"
+                >
+                  {t("nav.signOut")}
+                </button>
+              </div>
+            </div>
+          )}
           <div className="mx-auto w-full max-w-5xl px-4 pb-10 lg:px-8">
             <Outlet />
           </div>

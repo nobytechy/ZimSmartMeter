@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import Spinner from "./Spinner";
 import { supabase } from "../lib/supabase";
 import {
   approveProposal,
@@ -86,7 +87,7 @@ export default function AgentPanel() {
           onClick={() => void checkNow()}
           className="font-mono text-xs text-mist underline underline-offset-4 disabled:opacity-60"
         >
-          {checking ? "…" : t("agent.runCheck")}
+          {checking ? <><Spinner className="mr-1.5" />{t("agent.runCheck")}</> : t("agent.runCheck")}
         </button>
       </div>
 
@@ -111,9 +112,14 @@ export default function AgentPanel() {
                     onClick={() => void approve(ev)}
                     className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95 disabled:opacity-60"
                   >
-                    {busyId === ev.id
-                      ? "Buying…"
-                      : `Approve $${ev.data.suggested_usd}`}
+                    {busyId === ev.id ? (
+                      <>
+                        <Spinner className="mr-2" />
+                        {`$${ev.data.suggested_usd}`}
+                      </>
+                    ) : (
+                      `Approve $${ev.data.suggested_usd}`
+                    )}
                   </button>
                 )}
                 <button

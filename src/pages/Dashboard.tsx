@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import Spinner from "../components/Spinner";
 import { Link } from "react-router";
 import ActivityList from "../components/ActivityList";
 import { useT } from "../i18n/context";
@@ -168,7 +169,7 @@ export default function Dashboard() {
               onClick={() => void demoMeter()}
               className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {busy ? "…" : t("dash.demoMeter")}
+              {busy ? <><Spinner className="mr-2" />{t("dash.demoMeter")}</> : t("dash.demoMeter")}
             </button>
             <Link
               to="/app/meters/new"

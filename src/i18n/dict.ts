@@ -409,6 +409,14 @@ export const dict = {
   "meter.backDash": { en: "Back to dashboard", sn: "Dzokera kudashboard", nd: "Buyela kwideshibhodi", zh: "返回仪表板" },
   "chat.noPast": { en: "No past chats yet.", sn: "Hapana hurukuro dzakapfuura.", nd: "Azikho izingxoxo ezidlulileyo.", zh: "暂无历史对话。" },
   "chat.askAbout": { en: "Ask about your electricity:", sn: "Bvunza nezvemagetsi ako:", nd: "Buza ngogesi wakho:", zh: "询问您的用电情况：" },
+  "idle.title": {
+    en: "You've been inactive — signing out in",
+    sn: "Hamuna kushandisa kwenguva — tichabuda mu",
+    nd: "Kade ungasebenzisi — sizaphuma ku",
+    zh: "您已闲置一段时间——将在以下时间后退出",
+  },
+  "idle.stay": { en: "Stay signed in", sn: "Ramba wapinda", nd: "Hlala ungenile", zh: "保持登录" },
+  "buy.preparing": { en: "Preparing checkout…", sn: "Kugadzirira kubhadhara…", nd: "Kulungiselela ukukhokha…", zh: "正在准备结账…" },
 } satisfies Record<string, Entry>;
 
 export type TKey = keyof typeof dict;
