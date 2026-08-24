@@ -3,7 +3,8 @@
 **An independent proof-of-concept exploring automated prepaid electricity crediting and smart-meter integration** — built as a modern PWA with React, TypeScript, Supabase, MQTT and an AI energy assistant.
 
 ![CI](https://github.com/nobytechy/ZimSmartMeter/actions/workflows/ci.yml/badge.svg)
-![Status](https://img.shields.io/badge/status-phase%202-blueviolet)
+![Status](https://img.shields.io/badge/status-live-brightgreen)
+![License](https://img.shields.io/badge/license-MIT-black)
 ![React](https://img.shields.io/badge/React-087ea4?logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
 ![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white)
@@ -18,8 +19,40 @@
 >
 > ZimSmartMeter is an **independent technical demonstration**. It is **not affiliated with ZESA** or any utility company, does **not** connect to any production utility infrastructure, and uses **no proprietary APIs, credentials, systems, branding, or confidential information**. All meters, payments, readings and balances in this project are **clearly labelled synthetic demo data** (e.g. `DEMO-METER-001`). No real money moves and no real electricity is dispensed.
 
-**Status:** ⚡ All three phases live — payments, IoT telemetry, AI assistant
-**Live demo:** [zimsmartmeter.netlify.app](https://zimsmartmeter.netlify.app)
+**Status:** ⚡ Live — all three phases shipped: payments · IoT telemetry · AI agent
+
+<table>
+<tr>
+<td><b>🔗 Live demo</b></td>
+<td><a href="https://zimsmartmeter.netlify.app">zimsmartmeter.netlify.app</a> — sign in with <code>+263 77 000 0001</code>, code <code>123456</code></td>
+</tr>
+<tr>
+<td><b>⏱️ 60-second tour</b></td>
+<td>Sign in → <i>Create my demo meter</i> → buy $10 → open <b>Simulator</b> → watch the balance drain live → ask <b>Noby</b> "how long will my balance last?"</td>
+</tr>
+<tr>
+<td><b>🌍 Languages</b></td>
+<td>English · chiShona · isiNdebele · 中文</td>
+</tr>
+<tr>
+<td><b>👤 Built by</b></td>
+<td>Noby Tebulo — <a href="https://nobie.netlify.app">portfolio</a> · <a href="https://wa.me/263774603865">WhatsApp</a></td>
+</tr>
+</table>
+
+---
+
+## For reviewers — the three-minute version
+
+If you have limited time, these are the parts worth opening:
+
+| What to look at | Where | Why it matters |
+|---|---|---|
+| **Atomic, replay-safe money flow** | [`purchase_electricity`](supabase/migrations/20260822210000_payment_methods.sql) | One PL/pgSQL transaction handles payment → purchase → credit → balance → ledger → audit. A duplicate event *cannot* credit twice: unique constraints referee the race, not application code. |
+| **Security enforced by the database** | [RLS policies](supabase/migrations/20260822120000_rls_policies.sql) | Own-rows-only reads, and almost no direct writes: money-touching tables have **no client write path at all**. Row access via RLS, column access via grants — a user can rename their meter but can never write `balance_kwh`. |
+| **Trust boundaries around payments** | [`supabase/functions/`](supabase/functions/) | Gateway keys live only in Edge Functions; the amount is re-read from the database rather than trusted from the client; settlement is `service_role`-only. Includes a byte-accurate PayNow protocol implementation (ordered-field SHA-512 hashing with inbound verification). |
+| **Tool-restricted AI** | [`assistant/index.ts`](supabase/functions/assistant/index.ts) | The model has zero database access. It may only request 13 typed tools, each executed server-side already scoped to the authenticated user — authorization sits *below* the model, not in the prompt. |
+| **Agentic layer with a constitution** | [`agent_noby`](supabase/migrations/20260823210000_agent_noby.sql) | Deterministic SQL sensors detect low balance and abnormal usage; the agent *proposes*, a human *approves*. The only autonomous spend is a user-authored standing rule, bounded to once per six hours and fully journaled. |
 
 ---
 
@@ -35,9 +68,9 @@ ZimSmartMeter simulates that complete loop using production-grade engineering pa
 
 ---
 
-## What it demonstrates (roadmap)
+## What it demonstrates
 
-### Phase 1 — Professional MVP *(in progress)*
+### Phase 1 — Payments & core app ✅
 
 - [x] Landing page and Supabase authentication (sign up, login, protected routes, session persistence)
 - [x] Register and view demo meters — balance, status, last reading, last communication
@@ -48,14 +81,14 @@ ZimSmartMeter simulates that complete loop using production-grade engineering pa
 - [x] PostgreSQL schema with Row Level Security and audit logging
 - [x] Production deployment to Netlify with a clean, incremental Git history
 
-### Phase 2 — Smart-meter / IoT simulation
+### Phase 2 — Smart-meter / IoT simulation ✅
 
 - [x] Device-like smart meter simulator: connects, authenticates, publishes readings, handles reconnects
 - [x] MQTT telemetry — voltage, current, power, energy consumed
 - [ ] Credit commands and acknowledgements delivered over MQTT *(stretch)*
 - [x] Realtime dashboard updates via Supabase Realtime (balance, status, new readings, new transactions)
 
-### Phase 3 — AI Energy Assistant
+### Phase 3 — AI Energy Assistant ✅
 
 - [x] LLM assistant with **controlled tool calling** — no unrestricted database access
 - [x] Balance queries, consumption comparisons, and depletion estimates in natural language
@@ -168,7 +201,7 @@ sequenceDiagram
 
 ---
 
-## MQTT design *(Phase 2)*
+## MQTT design
 
 Topic convention:
 
@@ -186,7 +219,7 @@ meters/{meterId}/commands
 
 ---
 
-## AI Energy Assistant *(Phase 3)*
+## AI Energy Assistant
 
 The assistant accesses the system exclusively through a controlled tool layer:
 
@@ -225,8 +258,6 @@ The app is installable on mobile and desktop. The dashboard and read-only views 
 ---
 
 ## Getting started
-
-> The Phase 1 scaffold lands with the first commits — until then, the steps below describe the intended local workflow.
 
 **Prerequisites:** Node.js 20+, npm, a free [Supabase](https://supabase.com) project, and optionally the Supabase CLI.
 
@@ -269,7 +300,7 @@ Minimum coverage targets: tariff calculation, purchase maths, duplicate-payment 
 
 ---
 
-## Project structure *(planned)*
+## Project structure
 
 ```
 src/
@@ -284,9 +315,42 @@ src/
 ├── utils/          # Pure helpers (tariff maths, formatting)
 ├── integrations/   # External integrations, kept isolated
 └── styles/         # Global styles / Tailwind setup
+├── i18n/           # Typed translation dictionary (en · sn · nd · zh)
 supabase/
-└── migrations/     # Versioned database migrations
+├── migrations/     # Versioned database migrations
+└── functions/      # Deno Edge Functions (gateways, AI assistant)
 ```
+
+---
+
+## Engineering notes
+
+A few decisions that shaped the build, written up because the reasoning is
+the interesting part:
+
+**Constraints as referees, not checks in code.** Two people claiming the
+same meter both pass a "is it free?" check — that's a TOCTOU race. The
+claim function instead *attempts* the insert and lets a unique constraint
+declare the winner, catching `unique_violation` to answer honestly. Same
+principle guards double-crediting, one-active-tariff, and one-purchase-per-payment.
+
+**Idempotency across every payment method.** The client mints one key per
+purchase *intent* and reuses it on retries. Instant, cash-at-agent,
+ManishaPay and direct PayNow all converge on one `complete_purchase()`
+routine, so a replayed webhook, a double-tapped button and a flaky-network
+retry all produce exactly one credit — verified against live gateways, not
+just in theory.
+
+**Offline that refuses to lie.** The PWA precaches the shell and serves
+last-known dashboard data when the network drops, with a visible "offline"
+badge. Payments deliberately require connectivity: a transaction that
+pretends to succeed offline is worse than one that fails honestly.
+
+**Real-world integration findings.** PayNow's edge resets TCP connections
+from Supabase's egress IPs, so the live PayNow lane routes through
+ManishaPay while the raw-protocol implementation ships as a documented
+reference. Integration testing against a live gateway also surfaced two
+genuine upstream bugs, both fixed at source.
 
 ---
 
@@ -307,14 +371,6 @@ Consumption anomaly detection · weekly usage summaries · estimated depletion n
 
 ---
 
-## Live demo
-
-**[zimsmartmeter.netlify.app](https://zimsmartmeter.netlify.app)** — sign in with a demo number
-(`+263 77 000 0001`, code `123456`), claim a meter, buy power, then open
-the Simulator and watch the balance drain live.
-
----
-
 ## Languages
 
 The interface ships in **English, chiShona, isiNdebele and 中文** — the
@@ -326,8 +382,39 @@ the fallback for any key a translation hasn't reached yet.
 Native-speaker corrections to the Shona and Ndebele strings are very
 welcome — open a PR against that single file.
 
-## About this project
+## About the author
 
-Built by **Noby** ([@nobytechy](https://github.com/nobytechy)) as a portfolio-grade demonstration and a hands-on deep-dive into modern full-stack architecture, event-driven payment integrity, IoT/MQTT patterns, and AI tool-calling.
+Built by **Noby Tebulo** ([@nobytechy](https://github.com/nobytechy)) — a
+Zimbabwean full-stack developer working across React/TypeScript frontends,
+PostgreSQL data modelling, payment integrations and IoT.
 
-The full build specification and phased workflow live in [CLAUDE.md](./CLAUDE.md) — the project is built incrementally with AI-assisted development, one reviewed phase at a time.
+ZimSmartMeter is a deliberate deep-dive: event-driven payment integrity,
+database-enforced security, MQTT telemetry, and tool-restricted AI, built
+in reviewable stages with the reasoning documented as it went. The related
+payment gateway it integrates with, [ManishaPay](https://github.com/nobytechy/manishapay),
+is also my own work.
+
+**Open to opportunities** — full-stack, backend, or fintech engineering,
+remote or Harare-based.
+
+- 🌐 Portfolio — [nobie.netlify.app](https://nobie.netlify.app)
+- 💬 WhatsApp — [+263 77 460 3865](https://wa.me/263774603865)
+- 🐙 GitHub — [@nobytechy](https://github.com/nobytechy)
+
+Reviewers: the [three-minute version](#for-reviewers--the-three-minute-version)
+at the top links straight to the code worth reading. Questions about any
+decision here are welcome — I'd enjoy talking through them.
+
+---
+
+## Development notes
+
+The build specification and phased workflow live in [CLAUDE.md](./CLAUDE.md);
+deployment steps are in [docs/DEPLOY.md](docs/DEPLOY.md). The project was
+built incrementally with AI-assisted development, one reviewed stage per
+commit — every migration was tested against a local PostgreSQL instance
+before being applied, and CI runs lint, tests and build on every push.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
