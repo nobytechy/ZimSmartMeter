@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { Link } from "react-router";
 import ActivityList from "../components/ActivityList";
+import { useT } from "../i18n/context";
 import AgentPanel from "../components/AgentPanel";
 
 const ConsumptionChart = lazy(() => import("../components/ConsumptionChart"));
@@ -20,6 +21,7 @@ import { formatMeterNumber } from "../utils/meterNumber";
 import { formatZimPhone } from "../utils/phone";
 
 export default function Dashboard() {
+  const t = useT();
   const { session } = useSession();
   const { meters, loading, error, refresh } = useMeters();
   const [busy, setBusy] = useState(false);
@@ -94,7 +96,7 @@ export default function Dashboard() {
     <div className="flex flex-col gap-6 pt-8 pb-16">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">Your meters</h1>
+          <h1 className="text-2xl font-semibold tracking-tight">{t("dash.title")}</h1>
           <p className="mt-0.5 font-mono text-sm text-mist">{phone}</p>
         </div>
         <div className="flex items-center gap-4">
@@ -153,7 +155,7 @@ export default function Dashboard() {
       {meters && meters.length === 0 && (
         <div className={`${glass} flex flex-col gap-4 p-6`}>
           <div>
-            <h2 className="text-lg font-semibold">No meters yet</h2>
+            <h2 className="text-lg font-semibold">{t("dash.noMeters")}</h2>
             <p className="mt-1 text-[15px] leading-relaxed text-mist">
               Claim a ready-made demo meter in one tap, or connect a meter by
               its 11-digit number and watch the registry verification answer.
@@ -166,13 +168,13 @@ export default function Dashboard() {
               onClick={() => void demoMeter()}
               className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {busy ? "Claiming…" : "Create my demo meter"}
+              {busy ? "…" : t("dash.demoMeter")}
             </button>
             <Link
               to="/app/meters/new"
               className="rounded-xl border border-white/15 px-5 py-4 text-center text-[15px] font-semibold hover:bg-white/5"
             >
-              Connect existing meter
+              {t("dash.connectExisting")}
             </Link>
           </div>
           {claimError && <p className="text-sm text-flare">{claimError}</p>}
@@ -192,7 +194,7 @@ export default function Dashboard() {
             <section className={`${glass} p-5`}>
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <h2 className="font-mono text-[11px] tracking-widest text-mist uppercase">
-                  Daily consumption
+                  {t("dash.consumption")}
                 </h2>
                 {meters.length > 1 && (
                   <div className="flex flex-wrap gap-1.5">
@@ -230,13 +232,13 @@ export default function Dashboard() {
             <section className={`${glass} p-5`}>
               <div className="flex items-center justify-between">
                 <h2 className="font-mono text-[11px] tracking-widest text-mist uppercase">
-                  Recent activity
+                  {t("dash.recentActivity")}
                 </h2>
                 <Link
                   to="/app/activity"
                   className="text-xs text-mist underline underline-offset-4 hover:text-paper"
                 >
-                  View all
+                  {t("dash.viewAll")}
                 </Link>
               </div>
               <div className="mt-2">

@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { BrowserRouter, Route, Routes } from "react-router";
 import RequireAuth from "./features/auth/RequireAuth";
 import { SessionProvider } from "./features/auth/SessionProvider";
+import { LanguageProvider } from "./i18n/LanguageProvider";
 import AppShell from "./layouts/AppShell";
 import Assistant from "./pages/Assistant";
 import Activity from "./pages/Activity";
@@ -16,7 +17,8 @@ import "./styles/index.css";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <SessionProvider>
+    <LanguageProvider>
+      <SessionProvider>
       <BrowserRouter>
         <Routes>
           <Route index element={<Landing />} />
@@ -33,6 +35,7 @@ createRoot(document.getElementById("root")!).render(
           </Route>
         </Routes>
       </BrowserRouter>
-    </SessionProvider>
+      </SessionProvider>
+    </LanguageProvider>
   </StrictMode>,
 );

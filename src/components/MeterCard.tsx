@@ -2,9 +2,11 @@ import { Link } from "react-router";
 import type { Meter } from "../types/meter";
 import { formatMeterNumber } from "../utils/meterNumber";
 import { glass } from "./ui";
+import { useT } from "../i18n/context";
 
 /** One meter, rendered the way its owner knows it: as an LCD readout. */
 export default function MeterCard({ meter }: { meter: Meter }) {
+  const t = useT();
   const online = meter.status === "online";
   const balanceTone =
     meter.balance_kwh <= 0
@@ -34,7 +36,7 @@ export default function MeterCard({ meter }: { meter: Meter }) {
       </div>
       <div className="rounded-xl bg-lcd p-4 font-mono">
         <div className="text-[11px] tracking-widest text-mist uppercase">
-          Balance
+          {t("dash.balance")}
         </div>
         <div className={`mt-1 text-3xl font-medium ${balanceTone}`}>
           {meter.balance_kwh.toFixed(1)} <span className="text-base">kWh</span>
@@ -49,7 +51,7 @@ export default function MeterCard({ meter }: { meter: Meter }) {
         to={`/app/meters/${meter.id}/buy`}
         className="mt-3 block rounded-lg bg-credit py-2.5 text-center text-sm font-semibold text-white active:bg-credit-deep"
       >
-        Buy electricity
+        {t("dash.buy")}
       </Link>
     </div>
   );

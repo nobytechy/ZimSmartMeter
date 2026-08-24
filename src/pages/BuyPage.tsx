@@ -19,6 +19,7 @@ import type { Tariff } from "../services/tariffs";
 import type { Meter } from "../types/meter";
 import { isValidAmount } from "../utils/amount";
 import { formatMeterNumber } from "../utils/meterNumber";
+import { useT } from "../i18n/context";
 import { computeKwh } from "../utils/tariff";
 
 const quickAmounts = [5, 10, 20, 50, 100] as const;
@@ -45,6 +46,7 @@ type Step =
  * is locked in and reused for every retry — retries can never buy twice.
  */
 export default function BuyPage() {
+  const t = useT();
   const { meterId } = useParams<{ meterId: string }>();
   const [meter, setMeter] = useState<Meter | null>(null);
   const [tariff, setTariff] = useState<Tariff | null>(null);
@@ -215,7 +217,7 @@ export default function BuyPage() {
         <>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Buy electricity
+              {t("buy.amountTitle")}
             </h1>
             <p className="mt-1 font-mono text-sm text-mist">
               {meter.nickname ?? formatMeterNumber(meter.meter_number)} ·
@@ -240,7 +242,7 @@ export default function BuyPage() {
           </div>
           <div className="flex flex-col gap-2">
             <label className="text-sm font-medium" htmlFor="amount">
-              Amount (min $5)
+              {t("buy.amountLabel")}
             </label>
             <input
               id="amount"
@@ -264,11 +266,11 @@ export default function BuyPage() {
             onClick={lockAmount}
             className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
           >
-            Continue
+            {t("buy.continue")}
           </button>
           {error && <p className="text-sm text-flare">{error}</p>}
           <Link to="/app" className="text-sm text-mist underline underline-offset-4">
-            Cancel
+            {t("buy.cancel")}
           </Link>
         </>
       )}
@@ -277,7 +279,7 @@ export default function BuyPage() {
         <>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              How will you pay?
+              {t("buy.methodTitle")}
             </h1>
             <p className="mt-1 font-mono text-sm text-mist">
               ${amount.toFixed(2)} → {kwhFor(amount)} kWh
@@ -351,7 +353,7 @@ export default function BuyPage() {
       {step === "confirm" && amount && (
         <>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Confirm purchase
+            {t("buy.confirmTitle")}
           </h1>
           <div className={`${glass} flex flex-col gap-3 p-5 font-mono text-sm`}>
             <div className="flex justify-between">
@@ -377,7 +379,7 @@ export default function BuyPage() {
               <span>${amount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between border-t border-white/10 pt-3">
-              <span className="text-mist">You receive</span>
+              <span className="text-mist">{t("buy.youReceive")}</span>
               <span className="text-phosphor">{kwhFor(amount)} kWh</span>
             </div>
           </div>
@@ -501,7 +503,7 @@ export default function BuyPage() {
       {step === "done" && result && (
         <>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Power credited
+            {t("buy.credited")}
           </h1>
           <div className="rounded-xl bg-lcd p-5 font-mono">
             <div className="flex items-center justify-between text-[11px] tracking-widest text-mist uppercase">
@@ -537,7 +539,7 @@ export default function BuyPage() {
             to="/app"
             className="rounded-xl bg-volt px-5 py-4 text-center text-[15px] font-semibold text-ink active:brightness-95"
           >
-            Done
+            {t("buy.done")}
           </Link>
         </>
       )}

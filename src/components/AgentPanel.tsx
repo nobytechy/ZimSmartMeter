@@ -10,6 +10,7 @@ import {
 } from "../services/agent";
 import type { AgentEvent, AgentSettings } from "../services/agent";
 import { glass } from "./ui";
+import { useT } from "../i18n/context";
 
 /**
  * Agent Noby's dashboard presence: open proposals and alerts with one-tap
@@ -17,6 +18,7 @@ import { glass } from "./ui";
  * The agent proposes; this panel is where a human decides.
  */
 export default function AgentPanel() {
+  const t = useT();
   const [events, setEvents] = useState<AgentEvent[]>([]);
   const [settings, setSettings] = useState<AgentSettings | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export default function AgentPanel() {
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="flex items-center gap-2 font-mono text-[11px] tracking-widest text-mist uppercase">
           <span aria-hidden className="h-2 w-2 rounded-full bg-volt motion-safe:animate-pulse" />
-          Agent Noby
+          {t("agent.title")}
         </h2>
         <button
           type="button"
@@ -84,7 +86,7 @@ export default function AgentPanel() {
           onClick={() => void checkNow()}
           className="font-mono text-xs text-mist underline underline-offset-4 disabled:opacity-60"
         >
-          {checking ? "checking…" : "run check now"}
+          {checking ? "…" : t("agent.runCheck")}
         </button>
       </div>
 
@@ -119,7 +121,7 @@ export default function AgentPanel() {
                   onClick={() => void setEventStatus(ev.id, "dismissed").then(refresh)}
                   className="text-sm text-mist underline underline-offset-4"
                 >
-                  Dismiss
+                  {t("agent.dismiss")}
                 </button>
               </div>
             </div>

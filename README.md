@@ -315,6 +315,17 @@ the Simulator and watch the balance drain live.
 
 ---
 
+## Languages
+
+The interface ships in **English, chiShona, isiNdebele and 中文** — the
+toggle sits in the landing navbar and the app header, and the choice
+persists per device (first visit follows the browser's language). All
+strings live in one typed dictionary, `src/i18n/dict.ts`, with English as
+the fallback for any key a translation hasn't reached yet.
+
+Native-speaker corrections to the Shona and Ndebele strings are very
+welcome — open a PR against that single file.
+
 ## About this project
 
 Built by **Noby** ([@nobytechy](https://github.com/nobytechy)) as a portfolio-grade demonstration and a hands-on deep-dive into modern full-stack architecture, event-driven payment integrity, IoT/MQTT patterns, and AI tool-calling.

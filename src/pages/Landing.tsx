@@ -1,6 +1,8 @@
 import { Link } from "react-router";
+import LanguageToggle from "../components/LanguageToggle";
 import Mark from "../components/Mark";
 import ProcessAnimation from "../components/ProcessAnimation";
+import { useT } from "../i18n/context";
 import WhatsAppFab from "../components/WhatsAppFab";
 import AccentLine from "../components/AccentLine";
 
@@ -15,9 +17,9 @@ const navLinks = [
 ] as const;
 
 const steps = [
-  ["01", "Pay", "Choose your meter and an amount — $10 to $100 — priced by a configurable tariff."],
-  ["02", "Verify", "The payment is checked once, and only once. A duplicate event can never credit twice — the database guarantees it."],
-  ["03", "Credit", "Units land on the meter automatically. Balance and history update live on your phone."],
+  ["01", "landing.step1", "landing.step1b"],
+  ["02", "landing.step2", "landing.step2b"],
+  ["03", "landing.step3", "landing.step3b"],
 ] as const;
 
 const features = [
@@ -42,6 +44,7 @@ const stack = [
 ] as const;
 
 export default function Landing() {
+  const t = useT();
   return (
     <div className="min-h-dvh bg-night text-paper">
       <WhatsAppFab />
@@ -67,12 +70,15 @@ export default function Landing() {
               GitHub
             </a>
           </div>
-          <Link
-            to="/login"
-            className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
-          >
-            Sign in
-          </Link>
+          <div className="flex items-center gap-2">
+            <LanguageToggle />
+            <Link
+              to="/login"
+              className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
+            >
+              {t("login.title")}
+            </Link>
+          </div>
         </nav>
         <AccentLine />
       </header>
@@ -89,33 +95,30 @@ export default function Landing() {
         <div className="relative mx-auto grid max-w-6xl items-center gap-12 px-5 pt-16 pb-20 lg:grid-cols-2 lg:pt-24 lg:pb-28">
           <div className="flex flex-col gap-6">
             <p className="font-mono text-[11px] tracking-widest text-volt uppercase">
-              Magetsi · prepaid electricity · demo
+              {t("landing.eyebrow")}
             </p>
             <h1 className="text-5xl leading-[1.05] font-bold tracking-tight md:text-6xl">
-              Power, credited the moment you pay.
+              {t("landing.headline")}
             </h1>
             <p className="max-w-xl text-lg leading-relaxed text-mist">
-              ZimSmartMeter is an independent Zimbabwean proof-of-concept: a
-              verified payment becomes meter credit automatically — no 20-digit
-              token to type. Balance, usage and history, live on any phone.
+{t("landing.sub")}
             </p>
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 to="/login"
                 className="rounded-xl bg-volt px-6 py-4 text-[15px] font-semibold text-ink active:brightness-95"
               >
-                Sign in with phone
+                {t("landing.signIn")}
               </Link>
               <a
                 href="https://github.com/nobytechy/ZimSmartMeter"
                 className="rounded-xl border border-white/15 px-6 py-4 text-[15px] font-semibold text-paper hover:bg-white/5"
               >
-                View the source
+                {t("landing.viewSource")}
               </a>
             </div>
             <p className="text-sm text-mist">
-              Demo phone numbers with fixed codes — no real SMS needed. Open
-              source, built in Zimbabwe.
+{t("landing.demoNote")}
             </p>
           </div>
 
@@ -163,22 +166,21 @@ export default function Landing() {
         <div className={`${glass} p-4 sm:p-8`}>
           <ProcessAnimation />
           <p className="mt-2 text-center text-xs text-mist">
-            One payment event, verified exactly once — watch the duplicate
-            bounce — then credited straight to the meter. No 20-digit token.
+{t("landing.animCaption")}
           </p>
         </div>
         <h2 className="mt-14 font-mono text-[11px] tracking-widest text-volt uppercase">
-          How it works
+          {t("landing.howEyebrow")}
         </h2>
         <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
-          Three steps. One transaction. Zero double credits.
+          {t("landing.howTitle")}
         </p>
         <div className="mt-8 grid gap-4 md:grid-cols-3">
           {steps.map(([n, title, detail]) => (
             <div key={n} className={`${glass} p-6`}>
               <span className="font-mono text-sm text-credit">{n}</span>
-              <h3 className="mt-3 text-lg font-semibold">{title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
+              <h3 className="mt-3 text-lg font-semibold">{t(title)}</h3>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{t(detail)}</p>
             </div>
           ))}
         </div>
@@ -190,10 +192,10 @@ export default function Landing() {
         className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
       >
         <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-          Features
+          {t("landing.featuresEyebrow")}
         </h2>
         <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
-          Built like a national utility app should be.
+          {t("landing.featuresTitle")}
         </p>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {features.map(([title, detail]) => (
@@ -213,15 +215,13 @@ export default function Landing() {
         className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
       >
         <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-          Technology
+          {t("landing.techEyebrow")}
         </h2>
         <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
-          Engineered in the open.
+          {t("landing.techTitle")}
         </p>
         <p className="mt-4 max-w-2xl leading-relaxed text-mist">
-          Every architectural decision — idempotency, row-level security, the
-          registry emulation, the MQTT topic design — is documented in the
-          repository and built in reviewable stages.
+{t("landing.techBody")}
         </p>
         <div className="mt-6 flex flex-wrap gap-2">
           {stack.map((item) => (
@@ -239,7 +239,7 @@ export default function Landing() {
       <section className="mx-auto max-w-6xl px-5 py-8">
         <div className={`${glass} border-volt/25 bg-volt/[0.07] p-6`}>
           <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-            Independent demo
+            {t("landing.disclaimerEyebrow")}
           </h2>
           <p className="mt-2 max-w-3xl text-sm leading-relaxed text-mist">
             ZimSmartMeter is an independent technical demonstration. It is not
@@ -274,7 +274,7 @@ export default function Landing() {
             </a>
           </div>
           <p className="text-sm text-mist">
-            Designed &amp; built by{" "}
+            {t("landing.builtBy")}{" "}
             <a
               href="https://nobie.netlify.app"
               className="text-paper underline underline-offset-4 hover:text-volt"

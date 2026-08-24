@@ -3,12 +3,14 @@ import { Navigate, useNavigate } from "react-router";
 import { useSession } from "../features/auth/sessionContext";
 import { requestOtp, verifyOtp } from "../services/auth";
 import { formatZimPhone, normalizeZimPhone } from "../utils/phone";
+import { useT } from "../i18n/context";
 import { fieldDark, glass } from "../components/ui";
 
 const demoNumbers = ["0770000001", "0770000002", "0770000003"] as const;
 
 /** Two-step wizard: phone → six-digit code. Demo numbers sign in one-tap. */
 export default function Login() {
+  const t = useT();
   const { session, loading } = useSession();
   const navigate = useNavigate();
   const [step, setStep] = useState<"phone" | "code">("phone");
@@ -60,9 +62,9 @@ export default function Login() {
       {step === "phone" ? (
         <>
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Sign in</h1>
+            <h1 className="text-2xl font-semibold tracking-tight">{t("login.title")}</h1>
             <p className="mt-1 text-[15px] text-mist">
-              We send a one-time code to your phone.
+              {t("login.sub")}
             </p>
           </div>
           <form
@@ -73,7 +75,7 @@ export default function Login() {
             }}
           >
             <label className="text-sm font-medium" htmlFor="phone">
-              Phone number
+              {t("login.phone")}
             </label>
             <input
               id="phone"
@@ -89,13 +91,13 @@ export default function Login() {
               disabled={busy}
               className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {busy ? "Sending…" : "Send code"}
+              {busy ? t("login.sending") : t("login.send")}
             </button>
           </form>
 
           <div className={`${glass} p-4`}>
             <p className="font-mono text-[11px] tracking-widest text-mist uppercase">
-              Demo access · no SMS needed
+              {t("login.demoAccess")}
             </p>
             <div className="mt-3 flex flex-col gap-2">
               {demoNumbers.map((n) => (
@@ -122,7 +124,7 @@ export default function Login() {
         <>
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">
-              Enter the code
+              {t("login.codeTitle")}
             </h1>
             <p className="mt-1 text-[15px] text-mist">
               Sent to {formatZimPhone(phone)} — demo numbers use{" "}
@@ -151,7 +153,7 @@ export default function Login() {
               disabled={busy}
               className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              {busy ? "Checking…" : "Verify & sign in"}
+              {busy ? t("login.sending") : t("login.verify")}
             </button>
             <button
               type="button"
@@ -161,7 +163,7 @@ export default function Login() {
               }}
               className="py-2 text-sm text-mist underline underline-offset-4"
             >
-              Change number
+              {t("login.changeNumber")}
             </button>
           </form>
         </>

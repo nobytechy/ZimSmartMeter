@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { fieldDark, glass } from "../components/ui";
+import { useT } from "../i18n/context";
 import {
   askAssistant,
   deleteConversation,
@@ -21,6 +22,7 @@ const suggestions = [
  * second column from `md` up.
  */
 export default function Assistant() {
+  const t = useT();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -127,10 +129,10 @@ export default function Assistant() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Noby · Energy Agent
+            {t("chat.title")}
           </h1>
           <p className="mt-0.5 text-sm text-mist">
-            Answers come only from your meter's data. Estimates are labelled.
+            {t("chat.sub")}
           </p>
         </div>
         <button
@@ -188,7 +190,7 @@ export default function Assistant() {
               <div className="mr-auto flex items-center gap-2 rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-2.5">
                 <span aria-hidden className="h-2 w-2 rounded-full bg-volt motion-safe:animate-pulse" />
                 <span className="font-mono text-xs text-mist">
-                  checking your data…
+                  {t("chat.thinking")}
                 </span>
               </div>
             )}
@@ -216,7 +218,7 @@ export default function Assistant() {
               disabled={busy || !input.trim()}
               className="rounded-xl bg-volt px-5 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              Ask
+              {t("chat.ask")}
             </button>
           </form>
         </div>
