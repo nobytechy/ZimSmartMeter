@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link } from "react-router";
 import ActivityList from "../components/ActivityList";
 import AgentPanel from "../components/AgentPanel";
 
@@ -12,7 +12,6 @@ import type { DayUsage } from "../features/consumption/simulated";
 import { useMeters } from "../features/meters/useMeters";
 import { useLowBalanceBeeper } from "../hooks/useLowBalanceBeeper";
 import { useTransactions } from "../features/transactions/useTransactions";
-import { signOut } from "../services/auth";
 import { claimDemoMeter } from "../services/meters";
 import { listUnread, markRead } from "../services/notifications";
 import type { AppNotification } from "../services/notifications";
@@ -23,7 +22,6 @@ import { formatZimPhone } from "../utils/phone";
 export default function Dashboard() {
   const { session } = useSession();
   const { meters, loading, error, refresh } = useMeters();
-  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [claimError, setClaimError] = useState<string | null>(null);
   const { txns, loading: txnsLoading } = useTransactions(8);
@@ -100,33 +98,6 @@ export default function Dashboard() {
           <p className="mt-0.5 font-mono text-sm text-mist">{phone}</p>
         </div>
         <div className="flex items-center gap-4">
-          {meters && meters.length > 0 && (
-            <>
-              <Link
-                to="/app/assistant"
-                className="rounded-lg bg-volt px-4 py-2 text-sm font-semibold text-ink active:brightness-95"
-              >
-                Ask Noby
-              </Link>
-              <Link
-                to="/app/simulator"
-                title="Run the virtual smart meter — telemetry over MQTT"
-                className="flex items-center gap-2 rounded-lg border border-volt/40 bg-volt/10 px-4 py-2 text-sm font-semibold text-volt hover:bg-volt/15"
-              >
-                <span aria-hidden className="relative flex h-2 w-2">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-volt opacity-75 motion-safe:animate-ping" />
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-volt" />
-                </span>
-                Simulator
-              </Link>
-              <Link
-                to="/app/meters/new"
-                className="rounded-lg border border-white/15 px-4 py-2 text-sm font-semibold hover:bg-white/5"
-              >
-                + Connect a meter
-              </Link>
-            </>
-          )}
           <button
             type="button"
             onClick={toggleBeeper}
@@ -135,15 +106,7 @@ export default function Dashboard() {
           >
             beeper: {beeper ? "on" : "off"}
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              void signOut().then(() => navigate("/login", { replace: true }));
-            }}
-            className="text-sm text-mist underline underline-offset-4"
-          >
-            Sign out
-          </button>
+
         </div>
       </div>
 
