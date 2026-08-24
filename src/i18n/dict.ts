@@ -417,6 +417,8 @@ export const dict = {
   },
   "idle.stay": { en: "Stay signed in", sn: "Ramba wapinda", nd: "Hlala ungenile", zh: "保持登录" },
   "buy.preparing": { en: "Preparing checkout…", sn: "Kugadzirira kubhadhara…", nd: "Kulungiselela ukukhokha…", zh: "正在准备结账…" },
+  "login.backSite": { en: "Back to main site", sn: "Dzokera kusaiti", nd: "Buyela kwisayithi", zh: "返回主站" },
+  "chrome.poweredBy": { en: "Powered by Noby", sn: "Yakagadzirwa naNoby", nd: "Yakhiwe nguNoby", zh: "由 Noby 提供技术支持" },
 } satisfies Record<string, Entry>;
 
 export type TKey = keyof typeof dict;

@@ -201,8 +201,17 @@ export default function AppShell() {
             <Outlet />
           </div>
           <footer className="border-t border-white/10">
-            <div className="mx-auto max-w-5xl px-4 py-5 text-xs leading-relaxed text-mist lg:px-8">
-{t("chrome.disclaimer")}
+            <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-5 text-xs leading-relaxed text-mist lg:px-8">
+              <span className="max-w-2xl">{t("chrome.disclaimer")}</span>
+              <a
+                href="https://nobie.netlify.app"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-1.5 font-mono whitespace-nowrap hover:text-volt"
+              >
+                <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-volt" />
+                {t("chrome.poweredBy")}
+              </a>
             </div>
           </footer>
         </main>

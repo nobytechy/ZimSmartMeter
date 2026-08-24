@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Spinner from "../components/Spinner";
-import { Navigate, useNavigate } from "react-router";
+import { Link, Navigate, useNavigate } from "react-router";
 import { useSession } from "../features/auth/sessionContext";
 import { requestOtp, verifyOtp } from "../services/auth";
 import { formatZimPhone, normalizeZimPhone } from "../utils/phone";
@@ -59,7 +59,16 @@ export default function Login() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-md flex-col gap-6 pt-10 pb-16">
+    <div className="mx-auto flex w-full max-w-md flex-col gap-6 pt-6 pb-16">
+      <Link
+        to="/"
+        className="flex items-center gap-2 self-start text-sm text-mist hover:text-paper"
+      >
+        <svg viewBox="0 0 24 24" className="h-3.5 w-3.5 stroke-current" fill="none" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M19 12H5M12 19l-7-7 7-7" />
+        </svg>
+        {t("login.backSite")}
+      </Link>
       {step === "phone" ? (
         <>
           <div>

@@ -4,6 +4,8 @@ import Mark from "../components/Mark";
 import ProcessAnimation from "../components/ProcessAnimation";
 import { useT } from "../i18n/context";
 import WhatsAppFab from "../components/WhatsAppFab";
+import BackToTop from "../components/BackToTop";
+import Reveal from "../components/Reveal";
 import AccentLine from "../components/AccentLine";
 
 /** Shared glass surface — the one decorative idea, used consistently. */
@@ -48,6 +50,7 @@ export default function Landing() {
   return (
     <div className="min-h-dvh bg-night text-paper">
       <WhatsAppFab />
+      <BackToTop />
       {/* ── Navbar ─────────────────────────────────────────────── */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-night/70 backdrop-blur-xl">
         <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
@@ -162,95 +165,103 @@ export default function Landing() {
       </section>
 
       {/* ── How it works ───────────────────────────────────────── */}
-      <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
-        <div className={`${glass} p-4 sm:p-8`}>
-          <ProcessAnimation />
-          <p className="mt-2 text-center text-xs text-mist">
-{t("landing.animCaption")}
+      <Reveal>
+  <section id="how" className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16">
+          <div className={`${glass} p-4 sm:p-8`}>
+            <ProcessAnimation />
+            <p className="mt-2 text-center text-xs text-mist">
+  {t("landing.animCaption")}
+            </p>
+          </div>
+          <h2 className="mt-14 font-mono text-[11px] tracking-widest text-volt uppercase">
+            {t("landing.howEyebrow")}
+          </h2>
+          <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
+            {t("landing.howTitle")}
           </p>
-        </div>
-        <h2 className="mt-14 font-mono text-[11px] tracking-widest text-volt uppercase">
-          {t("landing.howEyebrow")}
-        </h2>
-        <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
-          {t("landing.howTitle")}
-        </p>
-        <div className="mt-8 grid gap-4 md:grid-cols-3">
-          {steps.map(([n, title, detail]) => (
-            <div key={n} className={`${glass} p-6`}>
-              <span className="font-mono text-sm text-credit">{n}</span>
-              <h3 className="mt-3 text-lg font-semibold">{t(title)}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{t(detail)}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+          <div className="mt-8 grid gap-4 md:grid-cols-3">
+            {steps.map(([n, title, detail]) => (
+              <div key={n} className={`${glass} p-6`}>
+                <span className="font-mono text-sm text-credit">{n}</span>
+                <h3 className="mt-3 text-lg font-semibold">{t(title)}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-mist">{t(detail)}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </Reveal>
 
       {/* ── Features ───────────────────────────────────────────── */}
-      <section
-        id="features"
-        className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
-      >
-        <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-          {t("landing.featuresEyebrow")}
-        </h2>
-        <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
-          {t("landing.featuresTitle")}
-        </p>
-        <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map(([title, detail]) => (
-            <div key={title} className={`${glass} p-6`}>
-              <div className="flex items-center gap-2">
-                <h3 className="font-semibold">{t(title)}</h3>
+      <Reveal>
+  <section
+          id="features"
+          className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
+        >
+          <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+            {t("landing.featuresEyebrow")}
+          </h2>
+          <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
+            {t("landing.featuresTitle")}
+          </p>
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map(([title, detail]) => (
+              <div key={title} className={`${glass} p-6`}>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold">{t(title)}</h3>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-mist">{t(detail)}</p>
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{t(detail)}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+            ))}
+          </div>
+        </section>
+      </Reveal>
 
       {/* ── Technology ─────────────────────────────────────────── */}
-      <section
-        id="technology"
-        className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
-      >
-        <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-          {t("landing.techEyebrow")}
-        </h2>
-        <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
-          {t("landing.techTitle")}
-        </p>
-        <p className="mt-4 max-w-2xl leading-relaxed text-mist">
-{t("landing.techBody")}
-        </p>
-        <div className="mt-6 flex flex-wrap gap-2">
-          {stack.map((item) => (
-            <span
-              key={item}
-              className="rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 font-mono text-sm text-mist"
-            >
-              {item}
-            </span>
-          ))}
-        </div>
-      </section>
+      <Reveal>
+  <section
+          id="technology"
+          className="mx-auto max-w-6xl scroll-mt-20 px-5 py-16"
+        >
+          <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+            {t("landing.techEyebrow")}
+          </h2>
+          <p className="mt-3 max-w-2xl text-3xl font-bold tracking-tight">
+            {t("landing.techTitle")}
+          </p>
+          <p className="mt-4 max-w-2xl leading-relaxed text-mist">
+  {t("landing.techBody")}
+          </p>
+          <div className="mt-6 flex flex-wrap gap-2">
+            {stack.map((item) => (
+              <span
+                key={item}
+                className="rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 font-mono text-sm text-mist"
+              >
+                {item}
+              </span>
+            ))}
+          </div>
+        </section>
+      </Reveal>
 
       {/* ── Disclaimer ─────────────────────────────────────────── */}
-      <section className="mx-auto max-w-6xl px-5 py-8">
-        <div className={`${glass} border-volt/25 bg-volt/[0.07] p-6`}>
-          <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
-            {t("landing.disclaimerEyebrow")}
-          </h2>
-          <p className="mt-2 max-w-3xl text-sm leading-relaxed text-mist">
-            ZimSmartMeter is an independent technical demonstration. It is not
-            affiliated with ZESA or any utility, does not connect to any
-            production infrastructure, and uses no proprietary systems or
-            branding. All meters, payments and readings are clearly labelled
-            synthetic demo data. No real money moves and no real electricity is
-            dispensed.
-          </p>
-        </div>
-      </section>
+      <Reveal>
+  <section className="mx-auto max-w-6xl px-5 py-8">
+          <div className={`${glass} border-volt/25 bg-volt/[0.07] p-6`}>
+            <h2 className="font-mono text-[11px] tracking-widest text-volt uppercase">
+              {t("landing.disclaimerEyebrow")}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm leading-relaxed text-mist">
+              ZimSmartMeter is an independent technical demonstration. It is not
+              affiliated with ZESA or any utility, does not connect to any
+              production infrastructure, and uses no proprietary systems or
+              branding. All meters, payments and readings are clearly labelled
+              synthetic demo data. No real money moves and no real electricity is
+              dispensed.
+            </p>
+          </div>
+        </section>
+      </Reveal>
 
       {/* ── Footer ─────────────────────────────────────────────── */}
       <footer className="mt-8 border-t border-white/10">
@@ -273,7 +284,8 @@ export default function Landing() {
               GitHub
             </a>
           </div>
-          <p className="text-sm text-mist">
+          <p className="flex items-center gap-1.5 text-sm text-mist">
+            <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-volt" />
             {t("landing.builtBy")}{" "}
             <a
               href="https://nobie.netlify.app"
