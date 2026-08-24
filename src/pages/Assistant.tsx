@@ -90,7 +90,7 @@ export default function Assistant() {
         + New chat
       </button>
       {conversations.length === 0 && (
-        <p className="px-1 py-2 text-xs text-mist">No past chats yet.</p>
+        <p className="px-1 py-2 text-xs text-mist">{t("chat.noPast")}</p>
       )}
       {conversations.map((c) => (
         <div
@@ -157,7 +157,7 @@ export default function Assistant() {
           <div className={`${glass} flex min-h-[46vh] flex-col gap-3 p-4`}>
             {messages.length === 0 && !busy && (
               <div className="flex flex-1 flex-col items-center justify-center gap-3 py-8">
-                <p className="text-sm text-mist">Ask about your electricity:</p>
+                <p className="text-sm text-mist">{t("chat.askAbout")}</p>
                 <div className="flex flex-wrap justify-center gap-2">
                   {suggestions.map((s) => (
                     <button

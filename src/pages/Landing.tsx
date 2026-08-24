@@ -23,12 +23,12 @@ const steps = [
 ] as const;
 
 const features = [
-  ["Automatic crediting", "A verified payment becomes meter credit on its own. No 20-digit token, no typing, no queue."],
-  ["Duplicate-proof payments", "Idempotent processing enforced by unique database constraints — double-crediting is structurally impossible."],
-  ["Verified meters", "Every meter number is checked against a simulated ZESA-style registry: format, status, and ownership."],
-  ["Live balance & usage", "A meter-style readout of your balance, daily consumption, and every transaction on record."],
-  ["Works offline", "Installable PWA. The dashboard stays readable without signal — payments sensibly require a connection."],
-  ["AI energy assistant", "Ask how long your balance will last. Answers come from real usage data through controlled tools."],
+  ["feat.auto", "feat.autoB"],
+  ["feat.dupe", "feat.dupeB"],
+  ["feat.verify", "feat.verifyB"],
+  ["feat.live", "feat.liveB"],
+  ["feat.offline", "feat.offlineB"],
+  ["feat.ai", "feat.aiB"],
 ] as const;
 
 const stack = [
@@ -201,9 +201,9 @@ export default function Landing() {
           {features.map(([title, detail]) => (
             <div key={title} className={`${glass} p-6`}>
               <div className="flex items-center gap-2">
-                <h3 className="font-semibold">{title}</h3>
+                <h3 className="font-semibold">{t(title)}</h3>
               </div>
-              <p className="mt-2 text-sm leading-relaxed text-mist">{detail}</p>
+              <p className="mt-2 text-sm leading-relaxed text-mist">{t(detail)}</p>
             </div>
           ))}
         </div>

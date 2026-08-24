@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import mqtt from "mqtt";
 import type { MqttClient } from "mqtt";
 import { glass } from "../components/ui";
+import { useT } from "../i18n/context";
 import { useMeters } from "../features/meters/useMeters";
 import { recordReading, setMeterPresence } from "../services/telemetry";
 import type { Meter } from "../types/meter";
@@ -28,6 +29,7 @@ const topic = (meterNumber: string, leaf: string) =>
 type Tick = { at: string; powerW: number; kwh: number; balance: number };
 
 export default function Simulator() {
+  const t = useT();
   const { meters } = useMeters();
   const [meterId, setMeterId] = useState<string | null>(null);
   const [running, setRunning] = useState(false);
@@ -192,7 +194,7 @@ export default function Simulator() {
               onClick={stop}
               className="ml-auto rounded-xl border border-white/15 px-5 py-2.5 text-sm font-semibold hover:bg-white/5"
             >
-              Stop
+              {t("sim.stop")}
             </button>
           ) : (
             <button
@@ -201,7 +203,7 @@ export default function Simulator() {
               disabled={!meter}
               className="ml-auto rounded-xl bg-volt px-5 py-2.5 text-sm font-semibold text-ink active:brightness-95 disabled:opacity-60"
             >
-              Start device
+              {t("sim.start")}
             </button>
           )}
         </div>
@@ -227,9 +229,9 @@ export default function Simulator() {
       <div className="grid grid-cols-3 gap-3">
         {(
           [
-            ["Voltage", gauges.v.toFixed(1), "V"],
-            ["Current", gauges.a.toFixed(2), "A"],
-            ["Power", String(gauges.w), "W"],
+            [t("sim.voltage"), gauges.v.toFixed(1), "V"],
+            [t("sim.current"), gauges.a.toFixed(2), "A"],
+            [t("sim.power"), String(gauges.w), "W"],
           ] as const
         ).map(([label, value, unit]) => (
           <div key={label} className="rounded-xl bg-lcd p-4 font-mono">

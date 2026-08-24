@@ -287,6 +287,128 @@ export const dict = {
     nd: "kuhlola idatha yakho…",
     zh: "正在查询您的数据…",
   },
+
+  // ── landing: feature cards ────────────────────────────────
+  "feat.auto": { en: "Automatic crediting", sn: "Kupinza magetsi kwega", nd: "Ukufaka ugesi ngokwakho", zh: "自动入账" },
+  "feat.autoB": {
+    en: "A verified payment becomes meter credit on its own. No 20-digit token, no typing, no queue.",
+    sn: "Mari yabhadharwa inozvishandura ichiva magetsi. Pasina token, pasina kunyora, pasina mutsara.",
+    nd: "Imali ekhokhelweyo iphenduka ibe ngugesi ngokwayo. Akulathokheni, akulakubhala, akulaqhoqhoqho.",
+    zh: "付款经验证后自动转为电表余额。无充值码、无需输入、无需排队。",
+  },
+  "feat.dupe": { en: "Duplicate-proof payments", sn: "Hapana kubhadhara kaviri", nd: "Akulakukhokha kabili", zh: "杜绝重复扣费" },
+  "feat.dupeB": {
+    en: "Idempotent processing enforced by unique database constraints — double-crediting is structurally impossible.",
+    sn: "Database inovimbisa kuti kubhadhara kumwe hakupinzi magetsi kaviri — hazvibviri.",
+    nd: "Idathabheyisi iqinisekisa ukuthi ukukhokha okukodwa akufaki ugesi kabili — akwenzeki.",
+    zh: "由数据库唯一约束保证幂等处理——重复入账在结构上不可能发生。",
+  },
+  "feat.verify": { en: "Verified meters", sn: "Mamita anoongororwa", nd: "Amamitha aqinisekisiweyo", zh: "电表验证" },
+  "feat.verifyB": {
+    en: "Every meter number is checked against a simulated ZESA-style registry: format, status, and ownership.",
+    sn: "Nhamba yega yega yemeter inoongororwa muregistry: chimiro, mamiriro, uye muridzi.",
+    nd: "Inombolo nganye yemitha ihlolwa kuregistry: isimo, isimo sokusebenza, lomnikazi.",
+    zh: "每个电表号都会在模拟注册表中核验：格式、状态与归属。",
+  },
+  "feat.live": { en: "Live balance & usage", sn: "Bhalansi nekushandiswa", nd: "Ibhalansi lokusetshenziswa", zh: "实时余额与用量" },
+  "feat.liveB": {
+    en: "A meter-style readout of your balance, daily consumption, and every transaction on record.",
+    sn: "Kuratidzwa kwebhalansi yako, kushandiswa kwezuva, uye kutengeserana kwese.",
+    nd: "Ukubonisa ibhalansi yakho, ukusetshenziswa kwansuku, lakho konke okwenziweyo.",
+    zh: "以电表样式呈现余额、每日用量和全部交易记录。",
+  },
+  "feat.offline": { en: "Works offline", sn: "Inoshanda pasina net", nd: "Isebenza ngaphandle kwenethi", zh: "离线可用" },
+  "feat.offlineB": {
+    en: "Installable PWA. The dashboard stays readable without signal — payments sensibly require a connection.",
+    sn: "PWA inogadzikwa pafoni. Dashboard inoramba ichiverengeka pasina signal — kubhadhara kunoda net.",
+    nd: "I-PWA engafakwa efonini. Ideshibhodi ihlala ifundeka ngaphandle kwesignali — ukukhokha kudinga inethi.",
+    zh: "可安装的 PWA。无信号时仪表板仍可查看——付款则需要联网。",
+  },
+  "feat.ai": { en: "AI energy assistant", sn: "Mubatsiri weAI wemagetsi", nd: "Umsizi we-AI kagesi", zh: "AI 能源助手" },
+  "feat.aiB": {
+    en: "Ask how long your balance will last. Answers come from real usage data through controlled tools.",
+    sn: "Bvunza kuti bhalansi yako ichagara nguva yakareba sei. Mhinduro dzinobva padata chaiyo.",
+    nd: "Buza ukuthi ibhalansi yakho izahlala isikhathi esingakanani. Izimpendulo zivela kwidatha yangempela.",
+    zh: "询问余额还能用多久。答案来自真实用量数据，经受控工具获取。",
+  },
+
+  // ── connect a meter ───────────────────────────────────────
+  "meter.addTitle": { en: "Connect a meter", sn: "Batanidza meter", nd: "Xhuma imitha", zh: "绑定电表" },
+  "meter.addSub": {
+    en: "Enter the 11-digit meter number. We verify it against the registry.",
+    sn: "Isa nhamba yemeter yemanhamba gumi nerimwe. Tinoiongorora muregistry.",
+    nd: "Faka inombolo yemitha yamadijithi angu-11. Siyayihlola kuregistry.",
+    zh: "输入 11 位电表号，我们会在注册表中核验。",
+  },
+  "meter.verifyConnect": { en: "Verify & connect", sn: "Ongorora ubatanidze", nd: "Qinisekisa uxhume", zh: "验证并绑定" },
+  "meter.verifying": { en: "Verifying…", sn: "Kuongorora…", nd: "Kuyahlolwa…", zh: "验证中…" },
+  "meter.back": { en: "Back to dashboard", sn: "Dzokera kudashboard", nd: "Buyela kwideshibhodi", zh: "返回仪表板" },
+
+  // ── activity ledger ───────────────────────────────────────
+  "activity.title": { en: "Activity", sn: "Zvakaitika", nd: "Okwenzakeleyo", zh: "活动记录" },
+  "activity.purchase": { en: "Purchase", sn: "Kutenga", nd: "Ukuthenga", zh: "购买" },
+  "activity.credit": { en: "Meter credit", sn: "Magetsi apinda", nd: "Ugesi ofakiweyo", zh: "电表入账" },
+  "activity.adjustment": { en: "Adjustment", sn: "Chinjo", nd: "Ukulungisa", zh: "调整" },
+  "activity.empty": {
+    en: "No activity yet — buy electricity and the ledger starts here.",
+    sn: "Hapana chakaitika — tenga magetsi uye nhoroondo inotanga pano.",
+    nd: "Akukho okwenzakeleyo — thenga ugesi bese umlando uqala lapha.",
+    zh: "暂无记录——购买电力后，账本将从这里开始。",
+  },
+
+  // ── buy: methods and confirm ──────────────────────────────
+  "buy.instant": { en: "Instant (simulated)", sn: "Nekukurumidza (kuedza)", nd: "Masinyane (ukulinga)", zh: "即时（模拟）" },
+  "buy.instantB": { en: "Completes immediately — the demo card.", sn: "Inopera ipapo ipapo — yekuedza.", nd: "Iqeda khonapho — eyokulinga.", zh: "立即完成——演示方式。" },
+  "buy.cash": { en: "Cash at agent", sn: "Cash kuagent", nd: "Imali ku-agent", zh: "代理点现金" },
+  "buy.cashB": {
+    en: "Reserve a reference, pay cash, agent confirms.",
+    sn: "Tora nhamba, ubhadhare cash, agent osimbisa.",
+    nd: "Thatha inombolo, ukhokhe imali, i-agent iqinisekise.",
+    zh: "先取参考号，现金支付，代理确认。",
+  },
+  "buy.processing": { en: "Processing…", sn: "Kugadzirisa…", nd: "Kuyasebenza…", zh: "处理中…" },
+  "buy.reserve": { en: "Reserve & get reference", sn: "Tora nhamba yekubhadhara", nd: "Thatha inombolo yokukhokha", zh: "预留并获取参考号" },
+  "buy.back": { en: "Back", sn: "Dzokera", nd: "Buyela", zh: "返回" },
+  "buy.changeAmount": { en: "Change amount", sn: "Chinja mari", nd: "Guqula imali", zh: "修改金额" },
+  "buy.meter": { en: "Meter", sn: "Meter", nd: "Imitha", zh: "电表" },
+  "buy.method": { en: "Method", sn: "Nzira", nd: "Indlela", zh: "方式" },
+  "buy.amount": { en: "Amount", sn: "Mari", nd: "Imali", zh: "金额" },
+  "buy.rate": { en: "Rate", sn: "Mutengo", nd: "Intengo", zh: "费率" },
+  "buy.balanceAfter": { en: "Balance after", sn: "Bhalansi mushure", nd: "Ibhalansi emva", zh: "购买后余额" },
+  "buy.later": { en: "Later — back to dashboard", sn: "Gare gare — dzokera kudashboard", nd: "Emva kwesikhathi — buyela", zh: "稍后——返回仪表板" },
+  "buy.checkNow": { en: "I've paid — check now", sn: "Ndabhadhara — tarisa", nd: "Sengikhokhile — hlola", zh: "我已付款——立即查询" },
+  "buy.checking": { en: "Checking…", sn: "Kutarisa…", nd: "Kuyahlolwa…", zh: "查询中…" },
+
+  // ── simulator ─────────────────────────────────────────────
+  "sim.title": { en: "Meter simulator", sn: "Simulator yemeter", nd: "Isimulator yemitha", zh: "电表模拟器" },
+  "sim.start": { en: "Start device", sn: "Tanga meter", nd: "Qalisa imitha", zh: "启动设备" },
+  "sim.stop": { en: "Stop", sn: "Mira", nd: "Misa", zh: "停止" },
+  "sim.voltage": { en: "Voltage", sn: "Voltage", nd: "I-voltage", zh: "电压" },
+  "sim.current": { en: "Current", sn: "Current", nd: "I-current", zh: "电流" },
+  "sim.power": { en: "Power", sn: "Simba", nd: "Amandla", zh: "功率" },
+  "meter.connectTitle": { en: "Connect a meter", sn: "Batanidza meter", nd: "Xhuma imitha", zh: "绑定电表" },
+  "meter.connectSub": {
+    en: "Enter the 11-digit meter number. We verify it against the registry.",
+    sn: "Isa nhamba yemeter yemanhamba gumi nerimwe. Tinoiongorora muregistry.",
+    nd: "Faka inombolo yemitha yamadijithi angu-11. Siyayihlola kuregistry.",
+    zh: "输入 11 位电表号，我们会在注册表中核验。",
+  },
+  "meter.digits": { en: "digits", sn: "manhamba", nd: "amadijithi", zh: "位数字" },
+  "meter.formatValid": {
+    en: "✓ format valid — the registry decides the rest",
+    sn: "✓ chimiro chakanaka — registry ndiyo inosarudza",
+    nd: "✓ isimo silungile — i-registry yiyo enquma",
+    zh: "✓ 格式正确——其余由注册表判定",
+  },
+  "meter.checkDigit": {
+    en: "check digit fails — one of those digits is mistyped",
+    sn: "nhamba yekuongorora yakundikana — imwe yemanhamba yakatypwa zvisizvo",
+    nd: "inombolo yokuhlola ayihambelani — enye yamadijithi ayilunganga",
+    zh: "校验位不通过——其中某位数字输错了",
+  },
+  "meter.backDash": { en: "Back to dashboard", sn: "Dzokera kudashboard", nd: "Buyela kwideshibhodi", zh: "返回仪表板" },
+  "chat.noPast": { en: "No past chats yet.", sn: "Hapana hurukuro dzakapfuura.", nd: "Azikho izingxoxo ezidlulileyo.", zh: "暂无历史对话。" },
+  "chat.askAbout": { en: "Ask about your electricity:", sn: "Bvunza nezvemagetsi ako:", nd: "Buza ngogesi wakho:", zh: "询问您的用电情况：" },
 } satisfies Record<string, Entry>;
 
 export type TKey = keyof typeof dict;

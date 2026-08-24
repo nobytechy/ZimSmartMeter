@@ -2,27 +2,28 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { glass, fieldDark } from "../components/ui";
 import { claimMeter } from "../services/meters";
+import { useT } from "../i18n/context";
+import type { TKey } from "../i18n/dict";
 import {
   formatMeterNumber,
   isValidMeterNumber,
   normalizeMeterNumber,
 } from "../utils/meterNumber";
 
-const reasonMessages: Record<string, string> = {
-  not_found: "This meter number is not in the utility registry.",
-  disconnected:
-    "The registry lists this meter as disconnected — it cannot be claimed.",
-  tampered:
-    "This meter is flagged for tampering. In the real world: call the utility.",
-  already_claimed: "This meter is already connected to another account.",
-  already_yours: "This meter is already on your dashboard.",
-  bad_format: "A meter number is 11 digits.",
-};
+const reasonKeys = {
+  not_found: "meter.notFound",
+  disconnected: "meter.disconnected",
+  tampered: "meter.tampered",
+  already_claimed: "meter.alreadyClaimed",
+  already_yours: "meter.alreadyYours",
+  bad_format: "meter.badFormat",
+} as const;
 
 const samples = ["04954653178", "04545682827", "04514800855"] as const;
 
 /** Connect-a-meter wizard: instant Luhn feedback, authoritative server verdict. */
 export default function AddMeter() {
+  const t = useT();
   const navigate = useNavigate();
   const [number, setNumber] = useState("");
   const [busy, setBusy] = useState(false);
@@ -38,7 +39,10 @@ export default function AddMeter() {
     const result = await claimMeter(number);
     setBusy(false);
     if (!result.ok) {
-      setError(reasonMessages[result.reason] ?? result.reason);
+      const key = reasonKeys[result.reason as keyof typeof reasonKeys] as
+        | TKey
+        | undefined;
+      setError(key ? t(key) : result.reason);
       return;
     }
     navigate("/app", { replace: true });
@@ -48,10 +52,10 @@ export default function AddMeter() {
     <div className="mx-auto flex w-full max-w-md flex-col gap-6 pt-10 pb-16">
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">
-          Connect a meter
+          {t("meter.connectTitle")}
         </h1>
         <p className="mt-1 text-[15px] text-mist">
-          Enter the 11-digit meter number. We verify it against the registry.
+          {t("meter.connectSub")}
         </p>
       </div>
 
@@ -76,17 +80,17 @@ export default function AddMeter() {
           }`}
         >
           {!complete
-            ? `${number.length}/11 digits`
+            ? `${number.length}/11 ${t("meter.digits")}`
             : valid
-              ? "✓ format valid — checking the registry decides the rest"
-              : "check digit fails — one of those digits is mistyped"}
+              ? `✓ ${t("meter.formatValid")}`
+              : t("meter.checkDigit")}
         </p>
         <button
           type="submit"
           disabled={!valid || busy}
           className="rounded-xl bg-volt px-5 py-4 text-[15px] font-semibold text-ink active:brightness-95 disabled:opacity-60"
         >
-          {busy ? "Verifying…" : "Verify & connect"}
+          {busy ? t("meter.verifying") : t("meter.verifyConnect")}
         </button>
       </form>
 
@@ -117,7 +121,7 @@ export default function AddMeter() {
         to="/app"
         className="text-sm text-mist underline underline-offset-4"
       >
-        Back to dashboard
+        {t("meter.backDash")}
       </Link>
     </div>
   );

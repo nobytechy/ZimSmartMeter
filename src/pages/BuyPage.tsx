@@ -294,9 +294,9 @@ export default function BuyPage() {
               }}
               className={`${glass} p-4 text-left hover:border-volt/50`}
             >
-              <div className="font-semibold">Instant (simulated)</div>
+              <div className="font-semibold">{t("buy.instant")}</div>
               <p className="mt-1 text-sm text-mist">
-                Completes immediately — the demo card.
+                {t("buy.instantB")}
               </p>
             </button>
             <button
@@ -307,9 +307,9 @@ export default function BuyPage() {
               }}
               className={`${glass} p-4 text-left hover:border-volt/50`}
             >
-              <div className="font-semibold">Cash at agent</div>
+              <div className="font-semibold">{t("buy.cash")}</div>
               <p className="mt-1 text-sm text-mist">
-                Reserve a reference, pay cash, agent confirms.
+                {t("buy.cashB")}
               </p>
             </button>
             <button
@@ -345,7 +345,7 @@ export default function BuyPage() {
             onClick={() => setStep("amount")}
             className="text-sm text-mist underline underline-offset-4"
           >
-            Change amount
+            {t("buy.changeAmount")}
           </button>
         </>
       )}
@@ -357,13 +357,13 @@ export default function BuyPage() {
           </h1>
           <div className={`${glass} flex flex-col gap-3 p-5 font-mono text-sm`}>
             <div className="flex justify-between">
-              <span className="text-mist">Meter</span>
+              <span className="text-mist">{t("buy.meter")}</span>
               <span>
                 {meter.nickname ?? formatMeterNumber(meter.meter_number)}
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-mist">Method</span>
+              <span className="text-mist">{t("buy.method")}</span>
               <span>
                 {method === "cash"
                   ? "Cash at agent"
@@ -375,7 +375,7 @@ export default function BuyPage() {
               </span>
             </div>
             <div className="flex justify-between">
-              <span className="text-mist">Amount</span>
+              <span className="text-mist">{t("buy.amount")}</span>
               <span>${amount.toFixed(2)}</span>
             </div>
             <div className="flex justify-between border-t border-white/10 pt-3">
@@ -390,10 +390,10 @@ export default function BuyPage() {
             className="rounded-xl bg-credit px-5 py-4 text-[15px] font-semibold text-white active:bg-credit-deep disabled:opacity-60"
           >
             {busy
-              ? "Processing…"
+              ? t("buy.processing")
               : method === "instant"
                 ? `Pay $${amount.toFixed(2)} (simulated)`
-                : "Reserve & get reference"}
+                : t("buy.reserve")}
           </button>
           {error && <p className="text-sm text-flare">{error}</p>}
           <button
@@ -401,7 +401,7 @@ export default function BuyPage() {
             onClick={() => setStep("method")}
             className="text-sm text-mist underline underline-offset-4"
           >
-            Back
+            {t("buy.back")}
           </button>
         </>
       )}
@@ -437,7 +437,7 @@ export default function BuyPage() {
           </button>
           {error && <p className="text-sm text-flare">{error}</p>}
           <Link to="/app" className="text-sm text-mist underline underline-offset-4">
-            Later — back to dashboard
+            {t("buy.later")}
           </Link>
         </>
       )}
@@ -484,7 +484,7 @@ export default function BuyPage() {
             onClick={() => void checkNow()}
             className="rounded-xl border border-white/15 px-5 py-4 text-[15px] font-semibold hover:bg-white/5 disabled:opacity-60"
           >
-            {busy ? "Checking…" : "I've paid — check now"}
+            {busy ? t("buy.checking") : t("buy.checkNow")}
           </button>
           {gwStatus && (
             <p className="text-center font-mono text-xs text-mist">
@@ -514,7 +514,7 @@ export default function BuyPage() {
               +{result.kwh.toFixed(1)} <span className="text-lg">kWh</span>
             </div>
             <div className="mt-3 border-t border-white/10 pt-3 text-sm text-mist">
-              New balance{" "}
+              {t("buy.newBalance")}{" "}
               <span className="text-phosphor">
                 {result.new_balance.toFixed(1)} kWh
               </span>{" "}

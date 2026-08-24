@@ -1,11 +1,12 @@
 import type { Txn } from "../services/transactions";
+import { useT } from "../i18n/context";
 import { shortDateTime } from "../utils/format";
 
-const labels: Record<Txn["type"], string> = {
-  purchase: "Purchase",
-  credit: "Meter credit",
-  adjustment: "Adjustment",
-};
+const labelKeys = {
+  purchase: "activity.purchase",
+  credit: "activity.credit",
+  adjustment: "activity.adjustment",
+} as const;
 
 function Value({ txn }: { txn: Txn }) {
   if (txn.type === "credit" && txn.kwh !== null) {
@@ -27,27 +28,26 @@ function Value({ txn }: { txn: Txn }) {
 
 /** The ledger, rendered: what happened, its reference, what it was worth. */
 export default function ActivityList({ txns }: { txns: Txn[] }) {
+  const t = useT();
   if (txns.length === 0) {
     return (
-      <p className="py-6 text-center text-sm text-mist">
-        No activity yet — buy electricity and the ledger starts here.
-      </p>
+      <p className="py-6 text-center text-sm text-mist">{t("activity.empty")}</p>
     );
   }
   return (
     <div className="flex flex-col">
-      {txns.map((t) => (
+      {txns.map((txn) => (
         <div
-          key={t.id}
+          key={txn.id}
           className="flex items-center justify-between gap-3 border-t border-white/10 py-3 first:border-t-0"
         >
           <div className="min-w-0">
-            <div className="text-sm font-medium">{labels[t.type]}</div>
+            <div className="text-sm font-medium">{t(labelKeys[txn.type])}</div>
             <div className="truncate font-mono text-xs text-mist">
-              {t.ref ?? "—"} · {shortDateTime(t.created_at)}
+              {txn.ref ?? "—"} · {shortDateTime(txn.created_at)}
             </div>
           </div>
-          <Value txn={t} />
+          <Value txn={txn} />
         </div>
       ))}
     </div>
