@@ -24,11 +24,11 @@
 <table>
 <tr>
 <td><b>🔗 Live demo</b></td>
-<td><a href="https://zimsmartmeter.netlify.app">zimsmartmeter.netlify.app</a> — sign in with <code>+263 77 000 0001</code>, code <code>123456</code></td>
+<td><a href="https://zimpower.netlify.app">zimpower.netlify.app</a> — sign in with <code>+263 77 000 0001</code>, code <code>123456</code></td>
 </tr>
 <tr>
 <td><b>⏱️ 60-second tour</b></td>
-<td>Sign in → <i>Create my demo meter</i> → buy $10 → open <b>Simulator</b> → watch the balance drain live → ask <b>Noby</b> "how long will my balance last?"</td>
+<td>Sign in → <i>Create my demo meter</i> → buy $10 → open <b>Simulator</b> → watch the balance drain live → ask <b>Noby</b> "how long will my balance last?" → switch language from the header</td>
 </tr>
 <tr>
 <td><b>🌍 Languages</b></td>

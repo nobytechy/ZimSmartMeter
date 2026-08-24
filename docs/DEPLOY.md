@@ -18,7 +18,7 @@ vars and Supabase's secret store only.
    | `VITE_SUPABASE_URL` | your Supabase project URL |
    | `VITE_SUPABASE_ANON_KEY` | the anon key (safe in the browser — RLS enforces) |
 
-4. Deploy. Note the site URL — call it `https://<site>.netlify.app`.
+4. Deploy. Note the site URL — call it `https://zimpower.netlify.app`.
 
 ### Deploying somewhere other than Netlify
 
@@ -65,7 +65,7 @@ npx supabase functions deploy manishapay
 
 ## 4 · Smoke test the live site
 
-1. Open `https://<site>.netlify.app` → landing renders, animation loops.
+1. Open `https://zimpower.netlify.app` → landing renders, animation loops.
 2. Sign in with a demo number (`+263 77 000 0001` / `123456`).
 3. Claim a demo meter → buy **$5 instant** → balance moves, ledger grows.
 4. Buy via **cash** → confirm → receipt.
