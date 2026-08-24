@@ -368,7 +368,10 @@ async function handle(req: Request): Promise<Response> {
   const { data: { user } } = await anon.auth.getUser();
   if (!user) return json({ error: "not_authenticated" }, 401);
 
-  let body: { messages?: { role: string; content: string }[] };
+  let body: {
+    messages?: { role: string; content: string }[];
+    conversation_id?: string;
+  };
   try {
     body = await req.json();
   } catch {
@@ -379,6 +382,36 @@ async function handle(req: Request): Promise<Response> {
     .slice(-16)
     .map((m) => ({ role: m.role, content: m.content.slice(0, 2000) }));
   if (clientMessages.length === 0) return json({ error: "bad_request" }, 400);
+
+  // ── conversation: create or verify ownership ──────────────
+  let conversationId = body.conversation_id ?? null;
+  const lastUser = [...clientMessages].reverse().find((m) => m.role === "user");
+  if (conversationId) {
+    const { data: convo } = await svc
+      .from("chat_conversations")
+      .select("id")
+      .eq("id", conversationId)
+      .eq("user_id", user.id)
+      .maybeSingle();
+    if (!convo) return json({ error: "conversation_not_found" }, 404);
+  } else {
+    const title = (lastUser?.content ?? "New chat").slice(0, 60);
+    const { data: convo, error: convoErr } = await svc
+      .from("chat_conversations")
+      .insert({ user_id: user.id, title })
+      .select("id")
+      .single();
+    if (convoErr || !convo) return json({ error: "conversation_create_failed" }, 500);
+    conversationId = convo.id;
+  }
+  if (lastUser) {
+    await svc.from("chat_messages").insert({
+      conversation_id: conversationId,
+      user_id: user.id,
+      role: "user",
+      content: lastUser.content,
+    });
+  }
 
   // Context the model may ground on — the user's own meters, nothing more.
   const { data: meterRows } = await svc
@@ -437,7 +470,18 @@ async function handle(req: Request): Promise<Response> {
       | undefined;
 
     if (!calls?.length) {
-      return json({ reply: msg.content ?? "" });
+      const reply = msg.content ?? "";
+      await svc.from("chat_messages").insert({
+        conversation_id: conversationId,
+        user_id: user.id,
+        role: "assistant",
+        content: reply,
+      });
+      await svc
+        .from("chat_conversations")
+        .update({ updated_at: new Date().toISOString() })
+        .eq("id", conversationId);
+      return json({ reply, conversation_id: conversationId });
     }
 
     for (const call of calls) {
@@ -457,6 +501,7 @@ async function handle(req: Request): Promise<Response> {
   return json({
     reply:
       "I checked the data several times but couldn't finish that one — try asking it more simply.",
+    conversation_id: conversationId,
   });
 }
 
